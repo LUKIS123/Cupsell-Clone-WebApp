@@ -2,3 +2,5 @@
 CupsellCloneAPI/bin
 CupsellCloneAPI/obj
 CupsellCloneAPI/CupsellCloneAPI.csproj.user
+CupsellCloneAPI.Database/obj/Debug
+CupsellCloneAPI.Database/obj

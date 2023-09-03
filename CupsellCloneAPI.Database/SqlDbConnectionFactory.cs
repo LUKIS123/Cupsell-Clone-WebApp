@@ -3,11 +3,11 @@ using Microsoft.Data.SqlClient;
 
 namespace CupsellCloneAPI.Database
 {
-    public class AppDbConnection : IDbConnectionFactory
+    public class SqlDbConnectionFactory : IDbConnectionFactory
     {
         private readonly string _connectionString;
 
-        public AppDbConnection(string connectionString)
+        public SqlDbConnectionFactory(string connectionString)
         {
             _connectionString = connectionString;
         }

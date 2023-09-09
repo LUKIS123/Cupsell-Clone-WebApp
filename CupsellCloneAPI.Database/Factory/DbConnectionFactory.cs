@@ -1,18 +1,18 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
 
-namespace CupsellCloneAPI.Database
+namespace CupsellCloneAPI.Database.Factory
 {
-    public class SqlDbConnectionFactory : IDbConnectionFactory
+    public class DbConnectionFactory : IDbConnectionFactory
     {
         private readonly string _connectionString;
 
-        public SqlDbConnectionFactory(string connectionString)
+        public DbConnectionFactory(string connectionString)
         {
             _connectionString = connectionString;
         }
 
-        public IDbConnection GetDbConnection()
+        public IDbConnection GetSqlDbConnection()
         {
             return new SqlConnection(_connectionString);
         }

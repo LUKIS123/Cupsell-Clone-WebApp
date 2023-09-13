@@ -1,12 +1,21 @@
+using CupsellCloneAPI.Core;
 using CupsellCloneAPI.Database;
+using CupsellCloneAPI.Database.BlobContainer;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSqlConnectionFactory(
-    builder.Configuration.GetConnectionString("CupsellCloneSqlDbConnection") ?? throw new InvalidOperationException()
+    builder.Configuration.GetConnectionString("CupsellCloneSqlDbConnection") ?? throw new ArgumentNullException()
 );
 builder.Services.AddModelRepositories();
+
+builder.Services.AddBlobStorage(
+    builder.Configuration.GetConnectionString("AzureBLobConnectionString") ?? throw new ArgumentNullException(),
+    builder.Configuration.GetSection("BlobContainerClient")["ContainerName"] ?? throw new ArgumentNullException()
+);
+
+builder.Services.AddServices();
 
 
 builder.Services.AddControllers();

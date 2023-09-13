@@ -7,3 +7,5 @@ CupsellCloneAPI.Database/obj
 CupsellCloneAPI.Database/bin
 CupsellCloneAPI.Core/bin
 CupsellCloneAPI.Core/obj
+CupsellCloneAPI.Database.BlobContainer/obj
+CupsellCloneAPI.Database.BlobContainer/bin

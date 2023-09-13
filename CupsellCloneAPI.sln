@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI", "CupsellC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Database", "CupsellCloneAPI.Database\CupsellCloneAPI.Database.csproj", "{7290D94F-A032-41AF-BC3E-F236321C45B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CupsellCloneAPI.Core", "CupsellCloneAPI.Core\CupsellCloneAPI.Core.csproj", "{E5796D6B-5147-4D16-85E0-0AEAA597CB95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Core", "CupsellCloneAPI.Core\CupsellCloneAPI.Core.csproj", "{E5796D6B-5147-4D16-85E0-0AEAA597CB95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CupsellCloneAPI.Database.BlobContainer", "CupsellCloneAPI.Database.BlobContainer\CupsellCloneAPI.Database.BlobContainer.csproj", "{795C3FA0-E6CD-4DE8-893D-0C03E91CB004}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,8 +29,15 @@ Global
 		{E5796D6B-5147-4D16-85E0-0AEAA597CB95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5796D6B-5147-4D16-85E0-0AEAA597CB95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5796D6B-5147-4D16-85E0-0AEAA597CB95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{795C3FA0-E6CD-4DE8-893D-0C03E91CB004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{795C3FA0-E6CD-4DE8-893D-0C03E91CB004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{795C3FA0-E6CD-4DE8-893D-0C03E91CB004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{795C3FA0-E6CD-4DE8-893D-0C03E91CB004}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A3382C69-3DAE-4545-9F62-6A795BC734BB}
 	EndGlobalSection
 EndGlobal

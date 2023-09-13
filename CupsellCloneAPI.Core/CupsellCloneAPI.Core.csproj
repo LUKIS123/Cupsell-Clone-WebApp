@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CupsellCloneAPI.Database\CupsellCloneAPI.Database.csproj" />
+		<ProjectReference Include="..\CupsellCloneAPI.Database.BlobContainer\CupsellCloneAPI.Database.BlobContainer.csproj" />
 	</ItemGroup>
 
 </Project>

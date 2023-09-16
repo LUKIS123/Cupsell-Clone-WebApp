@@ -43,6 +43,42 @@ WHERE A.Id = @Id";
         return result.FirstOrDefault();
     }
 
+    public async Task<Dictionary<Guid, IEnumerable<AvailableItem>>> GetAvailableItemsByOffersIds(
+        IEnumerable<Guid> offerIds)
+    {
+        using var conn = _connectionFactory.GetSqlDbConnection();
+        const string sql = $@"
+SELECT
+    A.Id as {nameof(AvailableItem.Id)},
+    A.OfferId as {nameof(AvailableItem.OfferId)},
+    A.SizeId as {nameof(AvailableItem.SizeId)},
+    A.Quantity as {nameof(AvailableItem.Quantity)},
+    S.Id as {nameof(Size.Id)},
+    S.Name as {nameof(Size.Name)}
+FROM [products].[AvailableItems] A
+    INNER JOIN [products].[Sizes] S
+    ON A.SizeId = S.Id
+WHERE A.OfferId IN @OfferIds";
+
+        var result = await conn.QueryAsync<AvailableItem, Size, AvailableItem>(
+            sql: sql,
+            map: (item, size) =>
+            {
+                item.Size = size;
+                return item;
+            },
+            param: new { OfferIds = offerIds },
+            splitOn: nameof(Size.Id)
+        );
+
+        return result
+            .GroupBy(x => x.OfferId)
+            .ToDictionary(
+                x => x.Key,
+                x => x.ToList().AsEnumerable()
+            );
+    }
+
     public async Task<IEnumerable<AvailableItem>> GetAvailableItemsByOfferId(Guid offerId)
     {
         using var conn = _connectionFactory.GetSqlDbConnection();

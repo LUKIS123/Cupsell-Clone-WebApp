@@ -1,4 +1,3 @@
-using CupsellCloneAPI.Database.BlobContainer.Models;
 using CupsellCloneAPI.Database.BlobContainer.Repositories;
 using CupsellCloneAPI.Database.Entities.Product;
 using CupsellCloneAPI.Database.Models;
@@ -11,11 +10,6 @@ namespace CupsellCloneAPI.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
     private readonly ILogger<WeatherForecastController> _logger;
     private readonly IProductRepository _productRepository;
     private readonly IOfferRepository _offerRepository;
@@ -39,9 +33,6 @@ public class WeatherForecastController : ControllerBase
     [HttpGet("TEST2")]
     public async Task<Offer?> GetOffer()
     {
-        var t = _blobRepository.ListBlobs();
-        await t;
-
         return await _offerRepository.GetById(Guid.Parse("80791029-d415-4739-afeb-75fb6fd1f5af"));
     }
 
@@ -52,26 +43,17 @@ public class WeatherForecastController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("download")]
-    public async Task<ActionResult> DownloadFile()
+    [HttpGet("getURLs")]
+    public async Task<ActionResult<IEnumerable<string>>> GetUrls()
     {
-        var result = await _blobRepository.DownloadBlobFilesInDirectory("offers/exampleOfferId");
-
-        var o = result.FirstOrDefault();
-        var s = o.FileStream;
-        var t = o.ContentType;
-        return File(s, t);
+        var result = await _blobRepository.ListBlobs("offers/exampleOfferId");
+        return Ok(result);
     }
 
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    [HttpGet("download")]
+    public async Task<ActionResult> DownloadFile([FromQuery] string path)
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+        var result = await _blobRepository.DownloadBlobFile(path);
+        return File(result.FileStream, result.ContentType);
     }
 }

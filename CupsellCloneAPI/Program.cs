@@ -1,6 +1,8 @@
 using CupsellCloneAPI.Core;
 using CupsellCloneAPI.Database;
 using CupsellCloneAPI.Database.BlobContainer;
+using CupsellCloneAPI.Middleware;
+using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +17,17 @@ builder.Services.AddBlobStorage(
     builder.Configuration.GetSection("BlobContainerClient")["ContainerName"] ?? throw new ArgumentNullException()
 );
 
-builder.Services.AddServices();
+builder.Services.AddCoreServices();
+builder.Services.AddAutoMapper();
 
+
+// NLog: Setup NLog for Dependency injection
+builder.Logging.SetMinimumLevel(LogLevel.Trace);
+builder.Host.UseNLog();
+
+// Middleware
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
+builder.Services.AddScoped<RequestTimeMiddleware>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -28,6 +39,9 @@ var app = builder.Build();
 
 app.UseResponseCaching();
 app.UseStaticFiles();
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<RequestTimeMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

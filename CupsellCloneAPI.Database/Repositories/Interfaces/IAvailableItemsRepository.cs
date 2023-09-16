@@ -5,6 +5,7 @@ namespace CupsellCloneAPI.Database.Repositories.Interfaces;
 public interface IAvailableItemsRepository
 {
     Task<AvailableItem?> GetById(Guid id);
+    Task<Dictionary<Guid, IEnumerable<AvailableItem>>> GetAvailableItemsByOffersIds(IEnumerable<Guid> offerIds);
     Task<IEnumerable<AvailableItem>> GetAvailableItemsByOfferId(Guid offerId);
     Task<Dictionary<Size, Guid>> CreateItems(Dictionary<Size, int> sizeQuantityDictionary, Guid offerId);
     Task Delete(Guid id);

@@ -12,8 +12,8 @@ namespace CupsellCloneAPI.Database.Entities.Product
         public required decimal Price { get; set; }
         public required bool IsAvailable { get; set; }
 
-        public virtual Product? Product { get; set; }
-        public virtual Graphic? Graphic { get; set; }
-        public virtual User.User? Seller { get; set; }
+        public virtual required Product Product { get; set; }
+        public virtual required Graphic Graphic { get; set; }
+        public virtual required User.User Seller { get; set; }
     }
 }

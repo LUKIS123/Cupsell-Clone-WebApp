@@ -9,7 +9,7 @@ namespace CupsellCloneAPI.Database.BlobContainer.Repositories;
 public class BlobRepository : IBlobRepository
 {
     private readonly IBlobServiceClientFactory _clientFactory;
-    public static readonly List<string> ImageExtensions = new List<string> { ".JPG", ".JPEG", ".PNG" };
+    public static readonly List<string> ImageExtensions = new() { ".JPG", ".JPEG", ".PNG" };
 
     public BlobRepository(IBlobServiceClientFactory clientFactory)
     {
@@ -58,7 +58,7 @@ public class BlobRepository : IBlobRepository
             BlobDownloadResult content = await blobClient.DownloadContentAsync();
             var downloadedData = content.Content.ToStream();
 
-            var fileName = new Uri(uri).Segments.LastOrDefault();
+            var fileName = uri.Split("/").Last();
             if (ImageExtensions.Contains(Path.GetExtension(fileName.ToUpperInvariant())))
             {
                 var extension = Path.GetExtension(fileName);
@@ -74,56 +74,6 @@ public class BlobRepository : IBlobRepository
 
         return result;
     }
-
-    // public async Task<BlobObject> GetBlobFile(string url)
-    // {
-    //     var fileName = new Uri(url).Segments.LastOrDefault();
-    //
-    //     try
-    //     {
-    //         var blobClient = _clientFactory.GetDefaultBlobContainerClient().GetBlobClient(fileName);
-    //         if (await blobClient.ExistsAsync())
-    //         {
-    //             BlobDownloadResult content = await blobClient.DownloadContentAsync();
-    //             var downloadedData = content.Content.ToStream();
-    //
-    //             if (ImageExtensions.Contains(Path.GetExtension(fileName.ToUpperInvariant())))
-    //             {
-    //                 var extension = Path.GetExtension(fileName);
-    //                 return new BlobObject
-    //                     { FileStream = downloadedData, ContentType = "image/" + extension.Remove(0, 1) };
-    //             }
-    //             else
-    //             {
-    //                 return new BlobObject { FileStream = downloadedData, ContentType = content.Details.ContentType };
-    //             }
-    //         }
-    //         else
-    //         {
-    //             return null;
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         throw;
-    //     }
-    // }
-
-    // public async Task<IEnumerable<BlobObject>> DownloadBlobFilesInDirectory(string prefix)
-    // {
-    //     var blobs = _clientFactory.GetDefaultBlobContainerClient().GetBlobsAsync(prefix: prefix);
-    //     var lst = new List<BlobObject>();
-    //     await foreach (var blobItem in blobs)
-    //     {
-    //         var blobClient = _clientFactory.GetDefaultBlobContainerClient().GetBlobClient(blobItem.Name);
-    //         var data = await blobClient.OpenReadAsync();
-    //         var content = await blobClient.DownloadContentAsync();
-    //
-    //         lst.Add(new BlobObject() { FileStream = data, ContentType = content.Value.Details.ContentType });
-    //     }
-    //
-    //     return lst;
-    // }
 
     public async Task<IEnumerable<BlobObject>> DownloadBlobFilesInDirectory(string prefix)
     {
@@ -160,14 +110,44 @@ public class BlobRepository : IBlobRepository
         await blobClient.DeleteIfExistsAsync();
     }
 
-    public async Task<IEnumerable<string>> ListBlobs()
+    public async Task<IEnumerable<string>> ListBlobs(string uri)
     {
         var lst = new List<string>();
-        await foreach (var blobItem in _clientFactory.GetDefaultBlobContainerClient().GetBlobsAsync())
+        await foreach (var blobItem in _clientFactory.GetDefaultBlobContainerClient().GetBlobsAsync(prefix: uri))
         {
             lst.Add(blobItem.Name);
         }
 
         return lst;
+    }
+
+    public async Task<IEnumerable<string>> ListBlobs(string path, Guid id)
+    {
+        var uri = $"{path}/{id}";
+        var lst = new List<string>();
+        await foreach (var blobItem in _clientFactory.GetDefaultBlobContainerClient().GetBlobsAsync(prefix: uri))
+        {
+            lst.Add(blobItem.Name);
+        }
+
+        return lst;
+    }
+
+    public async Task<Dictionary<Guid, IEnumerable<string>>> ListBlobsByGuids(string path, IEnumerable<Guid> guids)
+    {
+        var guidUrisDictionary = new Dictionary<Guid, IEnumerable<string>>();
+        foreach (var guid in guids)
+        {
+            var uri = $"{path}/{guid}";
+            var lst = new List<string>();
+            await foreach (var blobItem in _clientFactory.GetDefaultBlobContainerClient().GetBlobsAsync(prefix: uri))
+            {
+                lst.Add(blobItem.Name);
+            }
+
+            guidUrisDictionary.Add(guid, lst);
+        }
+
+        return guidUrisDictionary;
     }
 }

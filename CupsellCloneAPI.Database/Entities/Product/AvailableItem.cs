@@ -10,6 +10,6 @@ namespace CupsellCloneAPI.Database.Entities.Product
         [ForeignKey("Size")] public required int SizeId { get; set; }
         public required int Quantity { get; set; }
 
-        public Size? Size { get; set; }
+        public virtual required Size Size { get; set; }
     }
 }

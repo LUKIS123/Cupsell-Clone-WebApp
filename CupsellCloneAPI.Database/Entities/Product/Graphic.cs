@@ -9,6 +9,6 @@ namespace CupsellCloneAPI.Database.Entities.Product
         public required string Name { get; set; }
         [ForeignKey("Seller")] public required Guid SellerId { get; set; }
 
-        public virtual User.User? Seller { get; set; }
+        public virtual required User.User Seller { get; set; }
     }
 }

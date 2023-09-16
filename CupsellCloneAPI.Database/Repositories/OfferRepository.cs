@@ -220,6 +220,7 @@ WHERE Id = @Id";
             {
                 product.ProductType = type;
                 offer.Product = product;
+                graphic.Seller = user;
                 offer.Graphic = graphic;
                 user.Role = role;
                 offer.Seller = user;

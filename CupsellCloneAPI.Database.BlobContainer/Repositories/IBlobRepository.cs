@@ -9,6 +9,8 @@ namespace CupsellCloneAPI.Database.BlobContainer.Repositories
         Task<BlobObject> DownloadBlobFile(string uri);
         Task<IEnumerable<BlobObject>> DownloadBlobFilesInDirectory(string prefix);
         Task DeleteBlob(string uri);
-        Task<IEnumerable<string>> ListBlobs();
+        Task<IEnumerable<string>> ListBlobs(string uri);
+        Task<IEnumerable<string>> ListBlobs(string path, Guid id);
+        Task<Dictionary<Guid, IEnumerable<string>>> ListBlobsByGuids(string path, IEnumerable<Guid> guids);
     }
 }

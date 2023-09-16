@@ -10,6 +10,6 @@ namespace CupsellCloneAPI.Database.Entities.Product
         public string? Description { get; set; }
         [ForeignKey("ProductType")] public required int ProductTypeId { get; set; }
 
-        public virtual ProductType? ProductType { get; set; }
+        public virtual required ProductType ProductType { get; set; }
     }
 }

@@ -9,3 +9,7 @@ CupsellCloneAPI.Core/bin
 CupsellCloneAPI.Core/obj
 CupsellCloneAPI.Database.BlobContainer/obj
 CupsellCloneAPI.Database.BlobContainer/bin
+CupsellCloneAPI.Authentication/bin
+CupsellCloneAPI.Authentication/obj
+CupsellCloneAPI.Database.Authentication/bin
+CupsellCloneAPI.Database.Authentication/obj

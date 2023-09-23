@@ -52,56 +52,31 @@ public class BlobRepository : IBlobRepository
     public async Task<BlobObject> DownloadBlobFile(string uri)
     {
         var blobClient = _clientFactory.GetDefaultBlobContainerClient().GetBlobClient(uri);
-        var result = new BlobObject();
-        if (await blobClient.ExistsAsync())
+        if (!await blobClient.ExistsAsync())
         {
-            BlobDownloadResult content = await blobClient.DownloadContentAsync();
-            var downloadedData = content.Content.ToStream();
-
-            var fileName = uri.Split("/").Last();
-            if (ImageExtensions.Contains(Path.GetExtension(fileName.ToUpperInvariant())))
-            {
-                var extension = Path.GetExtension(fileName);
-                result.ContentType = "image/" + extension.Remove(0, 1);
-            }
-            else
-            {
-                result.ContentType = content.Details.ContentType;
-            }
-
-            result.FileStream = downloadedData;
+            throw new BlobFileNotFoundException($"File [{uri}] does not exist!");
         }
 
-        return result;
-    }
+        BlobDownloadResult content = await blobClient.DownloadContentAsync();
+        var downloadedData = content.Content.ToStream();
+        var fileName = uri.Split("/").Last();
 
-    public async Task<IEnumerable<BlobObject>> DownloadBlobFilesInDirectory(string prefix)
-    {
-        var blobs = _clientFactory.GetDefaultBlobContainerClient().GetBlobsAsync(prefix: prefix);
-        var lst = new List<BlobObject>();
-        await foreach (var blobItem in blobs)
+        string contentType;
+        if (ImageExtensions.Contains(Path.GetExtension(fileName.ToUpperInvariant())))
         {
-            var blobClient = _clientFactory.GetDefaultBlobContainerClient().GetBlobClient(blobItem.Name);
-            var result = new BlobObject();
-
-            BlobDownloadResult content = await blobClient.DownloadContentAsync();
-            var downloadedData = content.Content.ToStream();
-
-            if (ImageExtensions.Contains(Path.GetExtension(blobItem.Name.ToUpperInvariant())))
-            {
-                var extension = Path.GetExtension(blobItem.Name);
-                result.ContentType = "image/" + extension.Remove(0, 1);
-            }
-            else
-            {
-                result.ContentType = content.Details.ContentType;
-            }
-
-            result.FileStream = downloadedData;
-            lst.Add(result);
+            var extension = Path.GetExtension(fileName);
+            contentType = "image/" + extension.Remove(0, 1);
+        }
+        else
+        {
+            contentType = content.Details.ContentType;
         }
 
-        return lst;
+        return new BlobObject()
+        {
+            FileStream = downloadedData,
+            ContentType = contentType
+        };
     }
 
     public async Task DeleteBlob(string uri)

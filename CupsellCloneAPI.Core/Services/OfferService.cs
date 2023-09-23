@@ -25,34 +25,32 @@ public class OfferService : IOfferService
         _imageService = imageService;
     }
 
-    public async Task<PageResult<OfferDto>> GetOffers(SearchQuery searchQuery, string sourceUrl)
+    public async Task<PageResult<OfferDto>> GetOffers(SearchQuery searchQuery)
     {
         var offers = (await _offerRepository.GetFiltered(
             searchQuery.SearchPhrase, searchQuery.PageNumber, searchQuery.PageSize, searchQuery.SortBy,
             searchQuery.SortDirection
         )).ToList();
 
-        var availableItems =
+        var availableOffersItems =
             await _availableItemsRepository.GetAvailableItemsByOffersIds(offers.Select(x => x.Id));
 
-        var offerImagesUris = await _imageService.GetOffersImagesUris(offers.Select(x => x.Id));
+        var offersImagesUris = await _imageService.GetOffersImagesUris(offers.Select(x => x.Id));
 
         var offerDtoList = offers
             .Select(offer =>
             {
                 var offerDto = _mapper.Map<OfferDto>(offer);
 
-                if (availableItems.TryGetValue(offerDto.Id, out var offerItems))
+                if (availableOffersItems.TryGetValue(offerDto.Id, out var offerItems))
                 {
                     offerDto.SizeQuantityDictionary = offerItems
                         .ToDictionary(x => x.Size.Name, x => x.Quantity);
                 }
 
-                if (offerImagesUris.TryGetValue(offerDto.Id, out var offerImageUris))
+                if (offersImagesUris.TryGetValue(offerDto.Id, out var offerImageUris))
                 {
-                    var imageUrisList = offerImageUris.ToList();
-                    var urlList = imageUrisList.Select(x => _imageService.MapOfferImageUrl(x, sourceUrl));
-                    offerDto.ImageUrls = urlList;
+                    offerDto.ImageUrls = offerImageUris;
                 }
 
                 return offerDto;
@@ -66,5 +64,18 @@ public class OfferService : IOfferService
             PageNumber = searchQuery.PageNumber
         };
         return results;
+    }
+
+    public async Task<OfferDto> GetOfferById(Guid id)
+    {
+        var offerTask = _offerRepository.GetById(id);
+        var availableItemsTask = _availableItemsRepository.GetAvailableItemsByOfferId(id);
+        var offerImageUrisTask = _imageService.GetOfferImageUris(id);
+        await Task.WhenAll(offerTask, availableItemsTask, offerImageUrisTask);
+
+        var offerDto = _mapper.Map<OfferDto>(offerTask.Result);
+        offerDto.SizeQuantityDictionary = availableItemsTask.Result.ToDictionary(x => x.Size.Name, x => x.Quantity);
+        offerDto.ImageUrls = offerImageUrisTask.Result;
+        return offerDto;
     }
 }

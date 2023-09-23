@@ -5,6 +5,7 @@ namespace CupsellCloneAPI.Core.Services.Interfaces
 {
     public interface IOfferService
     {
-        Task<PageResult<OfferDto>> GetOffers(SearchQuery searchQuery, string sourceUrl);
+        Task<PageResult<OfferDto>> GetOffers(SearchQuery searchQuery);
+        Task<OfferDto> GetOfferById(Guid id);
     }
 }

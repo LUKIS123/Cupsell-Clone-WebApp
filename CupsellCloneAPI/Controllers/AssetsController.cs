@@ -14,10 +14,17 @@ public class AssetsController : ControllerBase
         _imageService = imageService;
     }
 
-    [HttpGet("{offerId}/{imageName}")]
+    [HttpGet("offers/{offerId}/{imageName}")]
     public async Task<ActionResult> GetOfferImage([FromRoute] Guid offerId, [FromRoute] string imageName)
     {
         var result = await _imageService.GetOfferImage(offerId, imageName);
-        return File(result.FileStream!, result.ContentType!);
+        return File(result.FileStream, result.ContentType);
+    }
+
+    [HttpGet("graphics/{graphicId}/{imageName}")]
+    public async Task<ActionResult> GetGraphicImage([FromRoute] Guid graphicId, [FromRoute] string imageName)
+    {
+        var result = await _imageService.GetGraphicImage(graphicId, imageName);
+        return File(result.FileStream, result.ContentType);
     }
 }

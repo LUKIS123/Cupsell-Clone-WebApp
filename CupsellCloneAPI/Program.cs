@@ -1,5 +1,7 @@
+using CupsellCloneAPI.Authentication;
 using CupsellCloneAPI.Core;
 using CupsellCloneAPI.Database;
+using CupsellCloneAPI.Database.Authentication;
 using CupsellCloneAPI.Database.BlobContainer;
 using CupsellCloneAPI.Middleware;
 using NLog.Web;
@@ -19,6 +21,16 @@ builder.Services.AddBlobStorage(
 
 builder.Services.AddCoreServices();
 builder.Services.AddAutoMapper();
+
+builder.Services.AddHttpContextAccessor();
+
+// Auth
+builder.Services.AddAuthenticationSettings(builder.Configuration.GetSection("Authentication"));
+builder.Services.AddAuthServiceCollection();
+builder.Services.AddTokenDatabaseRepository();
+
+// TODO: osobny DI extension do tego z Policy
+builder.Services.AddAuthorization();
 
 
 // NLog: Setup NLog for Dependency injection
@@ -52,6 +64,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

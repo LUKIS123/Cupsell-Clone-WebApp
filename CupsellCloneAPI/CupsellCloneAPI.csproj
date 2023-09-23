@@ -6,13 +6,13 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <Content Remove="nlog.config" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="nlog.config" />
-	</ItemGroup>
+	<!-- <ItemGroup> -->
+	<!-- 	<Content Remove="nlog.config" /> -->
+	<!-- </ItemGroup> -->
+	<!-- -->
+	<!-- <ItemGroup> -->
+	<!-- 	<None Include="nlog.config" /> -->
+	<!-- </ItemGroup> -->
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9" />
@@ -24,6 +24,18 @@
 		<ProjectReference Include="..\CupsellCloneAPI.Database\CupsellCloneAPI.Database.csproj" />
 		<ProjectReference Include="..\CupsellCloneAPI.Database.BlobContainer\CupsellCloneAPI.Database.BlobContainer.csproj" />
 		<ProjectReference Include="..\CupsellCloneAPI.Core\CupsellCloneAPI.Core.csproj" />
+		<ProjectReference Include="..\CupsellCloneAPI.Authentication\CupsellCloneAPI.Authentication.csproj" />
+		<ProjectReference Include="..\CupsellCloneAPI.Database.Authentication\CupsellCloneAPI.Database.Authentication.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="nlog.config">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Models\" />
 	</ItemGroup>
 
 </Project>

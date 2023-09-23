@@ -9,7 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Database", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Core", "CupsellCloneAPI.Core\CupsellCloneAPI.Core.csproj", "{E5796D6B-5147-4D16-85E0-0AEAA597CB95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CupsellCloneAPI.Database.BlobContainer", "CupsellCloneAPI.Database.BlobContainer\CupsellCloneAPI.Database.BlobContainer.csproj", "{795C3FA0-E6CD-4DE8-893D-0C03E91CB004}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Database.BlobContainer", "CupsellCloneAPI.Database.BlobContainer\CupsellCloneAPI.Database.BlobContainer.csproj", "{795C3FA0-E6CD-4DE8-893D-0C03E91CB004}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Authentication", "CupsellCloneAPI.Authentication\CupsellCloneAPI.Authentication.csproj", "{E812E91E-8D16-4FC7-8372-FBDA71500E41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CupsellCloneAPI.Database.Authentication", "CupsellCloneAPI.Database.Authentication\CupsellCloneAPI.Database.Authentication.csproj", "{6FF4AB00-6FA4-46BB-9713-9F2C46AD8CDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{795C3FA0-E6CD-4DE8-893D-0C03E91CB004}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{795C3FA0-E6CD-4DE8-893D-0C03E91CB004}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{795C3FA0-E6CD-4DE8-893D-0C03E91CB004}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E812E91E-8D16-4FC7-8372-FBDA71500E41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E812E91E-8D16-4FC7-8372-FBDA71500E41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E812E91E-8D16-4FC7-8372-FBDA71500E41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E812E91E-8D16-4FC7-8372-FBDA71500E41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FF4AB00-6FA4-46BB-9713-9F2C46AD8CDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FF4AB00-6FA4-46BB-9713-9F2C46AD8CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FF4AB00-6FA4-46BB-9713-9F2C46AD8CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FF4AB00-6FA4-46BB-9713-9F2C46AD8CDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

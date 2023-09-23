@@ -2,7 +2,7 @@
 {
     public class BlobObject
     {
-        public Stream? FileStream { get; set; }
-        public string? ContentType { get; set; }
+        public required Stream FileStream { get; set; }
+        public required string ContentType { get; set; }
     }
 }

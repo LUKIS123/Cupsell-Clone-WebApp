@@ -1,4 +1,5 @@
-﻿using CupsellCloneAPI.Database.BlobContainer.Exceptions;
+﻿using CupsellCloneAPI.Authentication.Exceptions;
+using CupsellCloneAPI.Database.BlobContainer.Exceptions;
 
 namespace CupsellCloneAPI.Middleware
 {
@@ -17,10 +18,25 @@ namespace CupsellCloneAPI.Middleware
             {
                 await next.Invoke(context);
             }
+            catch (ForbidException forbidException)
+            {
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync(forbidException.Message);
+            }
+            catch (InvalidLoginParamsException invalidParamsException)
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync(invalidParamsException.Message);
+            }
             catch (BlobFileAlreadyExistsException blobFileAlreadyExists)
             {
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(blobFileAlreadyExists.Message);
+            }
+            catch (BlobFileNotFoundException blobFileNotFound)
+            {
+                context.Response.StatusCode = 404;
+                await context.Response.WriteAsync(blobFileNotFound.Message);
             }
             catch (Exception ex)
             {

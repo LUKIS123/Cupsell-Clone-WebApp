@@ -19,12 +19,13 @@ public class UserContextService : IUserContextService
         get
         {
             var value = User?.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (value != null)
+            if (value == null) return null;
+            if (!Guid.TryParse(value, out var userId))
             {
-                return (Guid?)Guid.Parse(value);
+                return null;
             }
 
-            return null;
+            return userId;
         }
     }
 }

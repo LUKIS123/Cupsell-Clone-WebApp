@@ -29,6 +29,7 @@ SELECT TOP 1
     U.DateOfBirth as {nameof(User.DateOfBirth)},
     U.Address as {nameof(User.Address)},
     U.RoleId as {nameof(User.RoleId)},
+    U.IsVerified as {nameof(User.IsVerified)},
     R.Id as {nameof(Role.Id)},
     R.Name as {nameof(Role.Name)}
 FROM [users].[Users] U
@@ -65,6 +66,7 @@ SELECT TOP 1
     U.DateOfBirth as {nameof(User.DateOfBirth)},
     U.Address as {nameof(User.Address)},
     U.RoleId as {nameof(User.RoleId)},
+    U.IsVerified as {nameof(User.IsVerified)},
     R.Id as {nameof(Role.Id)},
     R.Name as {nameof(Role.Name)}
 FROM [users].[Users] U
@@ -154,6 +156,24 @@ WHERE Id = @Id";
             {
                 Email = email, Username = username, Password = password, PhoneNumber = phoneNumber, Name = name,
                 LastName = lastName, DateOfBirth = dateOfBirth, AddRess = address, RoleId = roleId, Id = id
+            }
+        );
+    }
+
+    public async Task UpdateUserVerificationStatusTrue(Guid id)
+    {
+        using var conn = _connectionFactory.GetSqlDbConnection();
+        const string sql = @"
+UPDATE [users].[Users]
+SET
+    IsVerified = @IsVerified
+WHERE Id = @Id";
+
+        await conn.ExecuteAsync(
+            sql: sql,
+            param: new
+            {
+                IsVerified = true, Id = id
             }
         );
     }

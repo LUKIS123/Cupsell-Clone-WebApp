@@ -21,12 +21,7 @@ namespace CupsellCloneAPI.Authentication.Authenticators
             var accessToken = _tokenGenerator.GenerateAccessToken(user);
             var refreshToken = _tokenGenerator.GenerateRefreshToken();
 
-            var refreshTokenDto = new RefreshToken
-            {
-                Token = refreshToken,
-                UserId = user.Id
-            };
-            await _refreshTokenRepository.Create(refreshTokenDto.UserId, refreshTokenDto.Token);
+            await _refreshTokenRepository.Create(user.Id, refreshToken);
 
             return new AuthenticatedUserResponseDto()
             {

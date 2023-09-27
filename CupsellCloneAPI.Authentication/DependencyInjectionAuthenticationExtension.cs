@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using CupsellCloneAPI.Authentication.Authenticators;
 using CupsellCloneAPI.Authentication.Authorization;
 using CupsellCloneAPI.Authentication.Services;
 using CupsellCloneAPI.Authentication.Settings;
@@ -54,10 +55,16 @@ namespace CupsellCloneAPI.Authentication
             serviceCollection.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             // Services
             serviceCollection.AddScoped<IUserContextService, UserContextService>();
-            serviceCollection.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
             serviceCollection.AddScoped<ITokenGenerator, DefaultTokenGenerator>();
-            serviceCollection.AddScoped<IAccountService, AccountService>();
             serviceCollection.AddScoped<IRefreshTokenValidator, RefreshTokenValidator>();
+            serviceCollection.AddScoped<IAuthenticator, Authenticator>();
+            serviceCollection.AddScoped<IAccountService, AccountService>();
+            return serviceCollection;
+        }
+
+        public static IServiceCollection AddAuthorizationHandlers(this IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
             return serviceCollection;
         }
     }

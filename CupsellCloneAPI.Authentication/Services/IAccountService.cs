@@ -5,7 +5,11 @@ namespace CupsellCloneAPI.Authentication.Services
     public interface IAccountService
     {
         Task RegisterUser(RegisterUserDto dto);
-        Task<string> GenerateJwt(LoginUserDto dto);
-        string GenerateRefreshTokenAndSave(Guid userId);
+        Task<AuthenticatedUserResponseDto> LoginUser(LoginUserDto loginUserDto);
+        Task<AuthenticatedUserResponseDto> RefreshUserJwt(string refreshToken);
+        Task DeleteUserRefreshTokens();
+
+        // Task<string> GenerateJwt(LoginUserDto dto);
+        // string GenerateRefreshTokenAndSave(Guid userId);
     }
 }

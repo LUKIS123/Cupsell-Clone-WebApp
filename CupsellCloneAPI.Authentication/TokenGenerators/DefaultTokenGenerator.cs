@@ -19,12 +19,18 @@ namespace CupsellCloneAPI.Authentication.TokenGenerators
 
         public AccessTokenDto GenerateAccessToken(User user)
         {
-            var claims = new List<Claim>()
+            var claims = new List<Claim>
             {
-                new Claim("id", user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Username),
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, $"{user.Name} {user.LastName}"),
+                new(ClaimTypes.Role, user.Role.Name),
+                new(ClaimTypes.Email, user.Email),
+                new("Username", user.Username)
             };
+            if (user.DateOfBirth.HasValue)
+            {
+                claims.Add(new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-MM-dd")));
+            }
 
             var expirationTime = DateTime.UtcNow.AddMinutes(_authenticationSettings.JwtExpireMinutes);
             var value = GenerateJwt(
@@ -54,7 +60,7 @@ namespace CupsellCloneAPI.Authentication.TokenGenerators
             );
         }
 
-        public string GenerateJwt(string secretKey, string issuer, string audience, DateTime expirationTime,
+        public static string GenerateJwt(string secretKey, string issuer, string audience, DateTime expirationTime,
             IEnumerable<Claim>? claims = null)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));

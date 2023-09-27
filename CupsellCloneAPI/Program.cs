@@ -1,5 +1,6 @@
 using CupsellCloneAPI.Authentication;
 using CupsellCloneAPI.Core;
+using CupsellCloneAPI.Core.Utils;
 using CupsellCloneAPI.Database;
 using CupsellCloneAPI.Database.Authentication;
 using CupsellCloneAPI.Database.BlobContainer;
@@ -28,6 +29,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthenticationSettings(builder.Configuration.GetSection("Authentication"));
 builder.Services.AddAuthServiceCollection();
 builder.Services.AddTokenDatabaseRepository();
+builder.Services.AddAuthorizationHandlers();
 
 // TODO: osobny DI extension do tego z Policy
 builder.Services.AddAuthorization();

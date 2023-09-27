@@ -16,5 +16,7 @@ public interface IUserRepository
     Task UpdateUser(Guid id, string email, string username, string password, string phoneNumber, string? name,
         string? lastName, DateTime? dateOfBirth, string? address, int roleId);
 
+    Task UpdateUserVerificationStatusTrue(Guid id);
+
     Task<IEnumerable<Role>> GetUserRoles();
 }

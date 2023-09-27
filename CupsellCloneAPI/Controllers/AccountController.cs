@@ -1,5 +1,6 @@
 ﻿using CupsellCloneAPI.Authentication.Models;
 using CupsellCloneAPI.Authentication.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CupsellCloneAPI.Controllers
@@ -16,23 +17,38 @@ namespace CupsellCloneAPI.Controllers
         }
 
         [HttpPost("register")]
-        public ActionResult Register([FromBody] RegisterUserDto dto)
+        public async Task<ActionResult> Register([FromBody] RegisterUserDto dto)
         {
-            _accountService.RegisterUser(dto);
+            await _accountService.RegisterUser(dto);
             return Ok();
         }
 
         [HttpPost("login")]
-        public ActionResult Login([FromBody] LoginUserDto dto)
+        public async Task<ActionResult<AuthenticatedUserResponseDto>> Login([FromBody] LoginUserDto dto)
         {
-            var token = _accountService.GenerateJwt(dto);
-            return Ok(token);
+            var response = await _accountService.LoginUser(dto);
+            return Ok(response);
         }
 
-        // [HttpPost("refresh")]
-        // public ActionResult Refresh(string refreshToken)
-        // {
-        //     var isValidToken  = _accountService.
-        // }
+        [HttpPost("refresh")]
+        public async Task<ActionResult<AuthenticatedUserResponseDto>> Refresh([FromBody] string refreshToken)
+        {
+            var response = await _accountService.RefreshUserJwt(refreshToken);
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpDelete("logout")]
+        public async Task<ActionResult> Logout()
+        {
+            await _accountService.DeleteUserRefreshTokens();
+            return NoContent();
+        }
+
+        [HttpPost("verify")]
+        public async Task<ActionResult> VerifyUserEmail([FromQuery] string token)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace CupsellCloneAPI.Database.Entities.User
         public DateTime? DateOfBirth { get; set; }
         public string? Address { get; set; }
         [ForeignKey("Role")] public required int RoleId { get; set; }
+        public required bool IsVerified { get; set; }
 
         public virtual required Role Role { get; set; }
     }

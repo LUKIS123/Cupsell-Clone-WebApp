@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Database.Bl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Authentication", "CupsellCloneAPI.Authentication\CupsellCloneAPI.Authentication.csproj", "{E812E91E-8D16-4FC7-8372-FBDA71500E41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CupsellCloneAPI.Database.Authentication", "CupsellCloneAPI.Database.Authentication\CupsellCloneAPI.Database.Authentication.csproj", "{6FF4AB00-6FA4-46BB-9713-9F2C46AD8CDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Database.Authentication", "CupsellCloneAPI.Database.Authentication\CupsellCloneAPI.Database.Authentication.csproj", "{6FF4AB00-6FA4-46BB-9713-9F2C46AD8CDE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Core.Utils", "CupsellCloneAPI.Core.Utils\CupsellCloneAPI.Core.Utils.csproj", "{81210601-E524-4221-8DDF-0A3380C74C5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{6FF4AB00-6FA4-46BB-9713-9F2C46AD8CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FF4AB00-6FA4-46BB-9713-9F2C46AD8CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FF4AB00-6FA4-46BB-9713-9F2C46AD8CDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81210601-E524-4221-8DDF-0A3380C74C5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81210601-E524-4221-8DDF-0A3380C74C5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81210601-E524-4221-8DDF-0A3380C74C5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81210601-E524-4221-8DDF-0A3380C74C5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

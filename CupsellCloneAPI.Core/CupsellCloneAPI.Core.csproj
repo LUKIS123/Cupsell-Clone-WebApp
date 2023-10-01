@@ -8,13 +8,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\CupsellCloneAPI.Database\CupsellCloneAPI.Database.csproj" />
 		<ProjectReference Include="..\CupsellCloneAPI.Database.BlobContainer\CupsellCloneAPI.Database.BlobContainer.csproj" />
-		<ProjectReference Include="..\CupsellCloneAPI.Authentication\CupsellCloneAPI.Authentication.csproj" />
-		<ProjectReference Include="..\CupsellCloneAPI.Database.Authentication\CupsellCloneAPI.Database.Authentication.csproj" />
 	</ItemGroup>
 
 </Project>

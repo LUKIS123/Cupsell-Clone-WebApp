@@ -23,7 +23,7 @@ namespace CupsellCloneAPI.Middleware
                 context.Response.StatusCode = 403;
                 await context.Response.WriteAsync(forbidException.Message);
             }
-            catch (InvalidLoginParamsException invalidParamsException)
+            catch (InvalidAuthenticationParamsException invalidParamsException)
             {
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(invalidParamsException.Message);

@@ -45,10 +45,19 @@ namespace CupsellCloneAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("verify")]
-        public async Task<ActionResult> VerifyUserEmail([FromQuery] string token)
+        [Authorize]
+        [HttpDelete("resendVerificationEmail")]
+        public async Task<ActionResult> ResendVerificationEmail()
         {
-            throw new NotImplementedException();
+            await _accountService.ResendUserVerificationEmail();
+            return Ok();
+        }
+
+        [HttpPost("verify")]
+        public async Task<ActionResult> VerifyUserEmail([FromQuery] string encryptedToken)
+        {
+            await _accountService.VerifyUser(encryptedToken);
+            return Ok();
         }
     }
 }

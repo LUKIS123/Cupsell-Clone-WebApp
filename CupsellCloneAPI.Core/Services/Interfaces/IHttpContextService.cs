@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 
-namespace CupsellCloneAPI.Authentication.Services
+namespace CupsellCloneAPI.Core.Services.Interfaces
 {
-    public interface IUserContextService
+    public interface IHttpContextService
     {
         ClaimsPrincipal? User { get; }
         Guid? GetUserId { get; }

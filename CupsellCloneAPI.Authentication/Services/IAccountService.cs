@@ -8,6 +8,8 @@ namespace CupsellCloneAPI.Authentication.Services
         Task<AuthenticatedUserResponseDto> LoginUser(LoginUserDto loginUserDto);
         Task<AuthenticatedUserResponseDto> RefreshUserJwt(string refreshToken);
         Task DeleteUserRefreshTokens();
+        Task ResendUserVerificationEmail();
+        Task VerifyUser(string encryptedToken);
 
         // Task<string> GenerateJwt(LoginUserDto dto);
         // string GenerateRefreshTokenAndSave(Guid userId);

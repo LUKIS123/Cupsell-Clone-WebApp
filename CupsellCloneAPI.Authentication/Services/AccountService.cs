@@ -1,7 +1,10 @@
-﻿using CupsellCloneAPI.Authentication.Authenticators;
+﻿using Azure.Core;
+using CupsellCloneAPI.Authentication.Authenticators;
 using CupsellCloneAPI.Authentication.Exceptions;
 using CupsellCloneAPI.Authentication.Models;
 using CupsellCloneAPI.Authentication.TokenValidators;
+using CupsellCloneAPI.Core.Services.Interfaces;
+using CupsellCloneAPI.Core.Utils.EmailCommunication;
 using CupsellCloneAPI.Database.Authentication.Repositories;
 using CupsellCloneAPI.Database.Entities.User;
 using CupsellCloneAPI.Database.Repositories.Interfaces;
@@ -16,14 +19,16 @@ public class AccountService : IAccountService
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IRefreshTokenValidator _refreshTokenValidator;
     private readonly IAuthenticator _authenticator;
-    private readonly IUserContextService _userContextService;
+    private readonly IHttpContextService _userContextService;
+    private readonly IEmailCommunicationUtility _emailCommunicationUtility;
 
     public AccountService(IPasswordHasher<User> passwordHasher,
         IUserRepository userRepository,
         IRefreshTokenRepository refreshTokenRepository,
         IRefreshTokenValidator refreshTokenValidator,
         IAuthenticator authenticator,
-        IUserContextService userContextService)
+        IHttpContextService userContextService,
+        IEmailCommunicationUtility emailCommunicationUtility)
     {
         _passwordHasher = passwordHasher;
         _userRepository = userRepository;
@@ -31,6 +36,7 @@ public class AccountService : IAccountService
         _refreshTokenValidator = refreshTokenValidator;
         _authenticator = authenticator;
         _userContextService = userContextService;
+        _emailCommunicationUtility = emailCommunicationUtility;
     }
 
     public async Task RegisterUser(RegisterUserDto dto)
@@ -54,6 +60,14 @@ public class AccountService : IAccountService
         newUser.PasswordHash = hashedPassword;
 
         await _userRepository.AddNewUser(newUser);
+
+        // TODO: integracja z baza danych, mianowicie w bazie powinny byc zapisane tokeny weryfikacyjne
+        var link = "";
+        var message = @$"
+<p>Hello user, please verify your account by clicking the link below:</p>
+ <a href=""{link}""> <h3>{link}</h3></a>
+";
+        await _emailCommunicationUtility.SendMailAsync(message, "Cupsellclone Account Verification", dto.Email);
     }
 
     public async Task<AuthenticatedUserResponseDto> LoginUser(LoginUserDto loginUserDto)
@@ -61,13 +75,13 @@ public class AccountService : IAccountService
         var user = await _userRepository.GetByEmail(loginUserDto.Email);
         if (user is null)
         {
-            throw new InvalidLoginParamsException("Invalid username or password");
+            throw new InvalidAuthenticationParamsException("Invalid username or password");
         }
 
         var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginUserDto.Password);
         if (result == PasswordVerificationResult.Failed)
         {
-            throw new InvalidLoginParamsException("Invalid username or password");
+            throw new InvalidAuthenticationParamsException("Invalid username or password");
         }
 
         return await _authenticator.Authenticate(user);
@@ -78,13 +92,13 @@ public class AccountService : IAccountService
         var isValidToken = _refreshTokenValidator.Validate(refreshToken);
         if (!isValidToken)
         {
-            throw new InvalidLoginParamsException("Could not use refresh token");
+            throw new InvalidAuthenticationParamsException("Could not use refresh token");
         }
 
         var refreshTokenDto = await _refreshTokenRepository.GetByToken(refreshToken);
         if (refreshTokenDto is null)
         {
-            throw new InvalidLoginParamsException("Could not use refresh token");
+            throw new InvalidAuthenticationParamsException("Could not use refresh token");
         }
 
         await _refreshTokenRepository.Delete(refreshTokenDto.Id);
@@ -110,6 +124,13 @@ public class AccountService : IAccountService
         await _refreshTokenRepository.DeleteByUserId(userId.Value);
     }
 
+    public async Task ResendUserVerificationEmail()
+    {
+    }
+
+    public async Task VerifyUser(string tokenHash)
+    {
+    }
 
     // public async Task<string> GenerateJwt(LoginUserDto dto)
     // {

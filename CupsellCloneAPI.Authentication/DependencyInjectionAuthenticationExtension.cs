@@ -54,7 +54,6 @@ namespace CupsellCloneAPI.Authentication
             // Password hasher
             serviceCollection.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             // Services
-            serviceCollection.AddScoped<IUserContextService, UserContextService>();
             serviceCollection.AddScoped<ITokenGenerator, DefaultTokenGenerator>();
             serviceCollection.AddScoped<IRefreshTokenValidator, RefreshTokenValidator>();
             serviceCollection.AddScoped<IAuthenticator, Authenticator>();

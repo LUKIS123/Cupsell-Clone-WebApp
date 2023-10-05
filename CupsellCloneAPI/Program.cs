@@ -7,6 +7,7 @@ using CupsellCloneAPI.Database.BlobContainer;
 using CupsellCloneAPI.Middleware;
 using NLog.Web;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -28,12 +29,15 @@ builder.Services.AddHttpContextAccessor();
 // Auth
 builder.Services.AddAuthenticationSettings(builder.Configuration.GetSection("Authentication"));
 builder.Services.AddAuthServiceCollection();
-builder.Services.AddTokenDatabaseRepository();
+builder.Services.AddTokenDatabaseRepositories();
 builder.Services.AddAuthorizationHandlers();
 
 // TODO: osobny DI extension do tego z Policy
 builder.Services.AddAuthorization();
 
+
+builder.Services.AddUtilities(builder.Configuration);
+builder.Services.AddAccessors();
 
 // NLog: Setup NLog for Dependency injection
 builder.Logging.SetMinimumLevel(LogLevel.Trace);

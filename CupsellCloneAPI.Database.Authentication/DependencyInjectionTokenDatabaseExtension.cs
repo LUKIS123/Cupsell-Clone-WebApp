@@ -5,9 +5,10 @@ namespace CupsellCloneAPI.Database.Authentication
 {
     public static class DependencyInjectionTokenDatabaseExtension
     {
-        public static IServiceCollection AddTokenDatabaseRepository(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddTokenDatabaseRepositories(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            serviceCollection.AddScoped<IVerificationTokenRepository, VerificationTokenRepository>();
             return serviceCollection;
         }
     }

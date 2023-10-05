@@ -33,4 +33,11 @@ public class OfferController : ControllerBase
         var offerDto = await _offerService.GetOfferById(offerId);
         return Ok(offerDto);
     }
+
+    [HttpPut("{offerId}")]
+    [Authorize(Roles = "Seller,Administrator")]
+    public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] UpdateOfferDto dto)
+    {
+        return Ok();
+    }
 }

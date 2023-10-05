@@ -14,6 +14,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\CupsellCloneAPI.Database\CupsellCloneAPI.Database.csproj" />
 		<ProjectReference Include="..\CupsellCloneAPI.Database.BlobContainer\CupsellCloneAPI.Database.BlobContainer.csproj" />
+		<ProjectReference Include="..\CupsellCloneAPI.Core.Utils\CupsellCloneAPI.Core.Utils.csproj" />
 	</ItemGroup>
 
 </Project>

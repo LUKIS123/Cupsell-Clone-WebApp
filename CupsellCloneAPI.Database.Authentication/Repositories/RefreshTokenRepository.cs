@@ -24,7 +24,7 @@ SELECT
 FROM [users].[UserRefreshTokens]
 WHERE RefreshToken = @RefreshToken";
 
-            return await conn.QuerySingleOrDefaultAsync<RefreshTokenDto>(
+            return await conn.QueryFirstOrDefaultAsync<RefreshTokenDto>(
                 sql: sql,
                 param: new { RefreshToken = token }
             );

@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using CupsellCloneAPI.Authentication.Authenticators;
 using CupsellCloneAPI.Authentication.Authorization;
+using CupsellCloneAPI.Authentication.EmailAuthenticationHelper;
 using CupsellCloneAPI.Authentication.Services;
 using CupsellCloneAPI.Authentication.Settings;
 using CupsellCloneAPI.Authentication.TokenGenerators;
@@ -58,6 +59,7 @@ namespace CupsellCloneAPI.Authentication
             serviceCollection.AddScoped<IRefreshTokenValidator, RefreshTokenValidator>();
             serviceCollection.AddScoped<IAuthenticator, Authenticator>();
             serviceCollection.AddScoped<IAccountService, AccountService>();
+            serviceCollection.AddScoped<IEmailCommunicationHelper, EmailCommunicationHelper>();
             return serviceCollection;
         }
 

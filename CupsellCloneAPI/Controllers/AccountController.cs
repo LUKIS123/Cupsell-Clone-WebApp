@@ -9,6 +9,8 @@ namespace CupsellCloneAPI.Controllers
     [Route("cupsellclone/account")]
     public class AccountController : ControllerBase
     {
+        // TODO: zrobic akcje dla modyfikacji danych konta oraz odzyskiwanie hasła
+
         private readonly IAccountService _accountService;
 
         public AccountController(IAccountService accountService)
@@ -46,18 +48,18 @@ namespace CupsellCloneAPI.Controllers
         }
 
         [Authorize]
-        [HttpDelete("resendVerificationEmail")]
+        [HttpPost("resendVerificationEmail")]
         public async Task<ActionResult> ResendVerificationEmail()
         {
             await _accountService.ResendUserVerificationEmail();
             return Ok();
         }
 
-        [HttpPost("verify")]
+        [HttpGet("verify")]
         public async Task<ActionResult> VerifyUserEmail([FromQuery] string encryptedToken)
         {
             await _accountService.VerifyUser(encryptedToken);
-            return Ok();
+            return Ok("Success! You can now login to your account!");
         }
     }
 }

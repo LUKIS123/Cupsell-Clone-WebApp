@@ -9,7 +9,6 @@ public static class DependencyInjectionCoreExtension
 {
     public static IServiceCollection AddCoreServices(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped<IHttpContextService, HttpContextService>();
         serviceCollection.AddScoped<IImageService, ImageService>();
         serviceCollection.AddScoped<IOfferService, OfferService>();
 

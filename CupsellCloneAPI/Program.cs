@@ -1,10 +1,14 @@
 using CupsellCloneAPI.Authentication;
+using CupsellCloneAPI.Authentication.Models;
 using CupsellCloneAPI.Core;
 using CupsellCloneAPI.Core.Utils;
 using CupsellCloneAPI.Database;
 using CupsellCloneAPI.Database.Authentication;
 using CupsellCloneAPI.Database.BlobContainer;
 using CupsellCloneAPI.Middleware;
+using CupsellCloneAPI.Validators;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using NLog.Web;
 
 
@@ -46,6 +50,11 @@ builder.Host.UseNLog();
 // Middleware
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<RequestTimeMiddleware>();
+
+// TODO: zrobic osobny DI Extension
+// Fluent Validation
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

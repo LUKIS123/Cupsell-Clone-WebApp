@@ -37,4 +37,10 @@ public class ImageService : IImageService
         var path = $"{GraphicCatalog}/{graphicId}/{imageName}";
         return await _blobRepository.DownloadBlobFile(path);
     }
+
+    public Task<string> UploadOfferImage()
+    {
+        throw new NotImplementedException();
+        //todo - image service
+    }
 }

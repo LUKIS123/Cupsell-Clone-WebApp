@@ -8,5 +8,6 @@ namespace CupsellCloneAPI.Core.Services.Interfaces
         Task<IEnumerable<string>> GetOfferImageUris(Guid offerId);
         Task<BlobObject> GetOfferImage(Guid offerName, string imageName);
         Task<BlobObject> GetGraphicImage(Guid graphicId, string imageName);
+        Task<string> UploadOfferImage();
     }
 }

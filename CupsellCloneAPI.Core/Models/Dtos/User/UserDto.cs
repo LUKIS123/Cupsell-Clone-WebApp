@@ -1,4 +1,4 @@
-﻿namespace CupsellCloneAPI.Core.Models.Dtos
+﻿namespace CupsellCloneAPI.Core.Models.Dtos.User
 {
     public class UserDto
     {

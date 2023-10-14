@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
-using CupsellCloneAPI.Core.Models.Dtos;
+using CupsellCloneAPI.Core.Models.Dtos.Graphic;
+using CupsellCloneAPI.Core.Models.Dtos.Offer;
+using CupsellCloneAPI.Core.Models.Dtos.Product;
+using CupsellCloneAPI.Core.Models.Dtos.User;
 using CupsellCloneAPI.Database.Entities.Product;
 using CupsellCloneAPI.Database.Entities.User;
 

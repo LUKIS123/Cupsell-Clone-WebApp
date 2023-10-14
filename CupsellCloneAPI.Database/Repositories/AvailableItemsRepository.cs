@@ -179,4 +179,24 @@ FROM [products].[Sizes]";
             sql: sql
         );
     }
+
+    public async Task<Size?> GetSizeById(int sizeId)
+    {
+        using var conn = _connectionFactory.GetSqlDbConnection();
+        const string sql = $@"
+SELECT TOP 1
+    Id as {nameof(Size.Id)},
+    Name as {nameof(Size.Name)}
+FROM [products].[Sizes]
+WHERE Id = @Id";
+
+        var result = await conn.QueryAsync<Size>(
+            sql: sql,
+            param: new
+            {
+                Id = sizeId
+            }
+        );
+        return result.FirstOrDefault();
+    }
 }

@@ -1,4 +1,8 @@
-﻿namespace CupsellCloneAPI.Core.Models.Dtos
+﻿using CupsellCloneAPI.Core.Models.Dtos.Graphic;
+using CupsellCloneAPI.Core.Models.Dtos.Product;
+using CupsellCloneAPI.Core.Models.Dtos.User;
+
+namespace CupsellCloneAPI.Core.Models.Dtos.Offer
 {
     public class OfferDto
     {
@@ -10,7 +14,7 @@
         public GraphicDto? Graphic { get; set; }
         public UserDto? Seller { get; set; }
 
-        public Dictionary<string, int> SizeQuantityDictionary { get; set; } = new();
+        public Dictionary<SizeDto, int> SizeQuantityDictionary { get; set; } = new();
         public IEnumerable<string> ImageUrls { get; set; } = default!;
     }
 }

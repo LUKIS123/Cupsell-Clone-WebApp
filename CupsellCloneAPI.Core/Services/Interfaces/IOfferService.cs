@@ -1,5 +1,5 @@
-﻿using CupsellCloneAPI.Core.Models.Dtos;
-using CupsellCloneAPI.Core.Models;
+﻿using CupsellCloneAPI.Core.Models;
+using CupsellCloneAPI.Core.Models.Dtos.Offer;
 
 namespace CupsellCloneAPI.Core.Services.Interfaces
 {
@@ -7,5 +7,6 @@ namespace CupsellCloneAPI.Core.Services.Interfaces
     {
         Task<PageResult<OfferDto>> GetOffers(SearchQuery searchQuery);
         Task<OfferDto> GetOfferById(Guid id);
+        Task<Guid> Create(CreateOfferDto dto);
     }
 }

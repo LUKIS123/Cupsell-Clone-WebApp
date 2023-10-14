@@ -11,4 +11,5 @@ public interface IAvailableItemsRepository
     Task Delete(Guid id);
     Task Update(Guid id, int sizeId, int quantity);
     Task<IEnumerable<Size>> GetSizes();
+    Task<Size?> GetSizeById(int sizeId);
 }

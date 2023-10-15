@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
-using AutoMapper;
+﻿using AutoMapper;
+using CupsellCloneAPI.Core.Exceptions;
 using CupsellCloneAPI.Core.Models;
 using CupsellCloneAPI.Core.Models.Dtos.Offer;
 using CupsellCloneAPI.Core.Services.Interfaces;
@@ -98,8 +97,7 @@ public class OfferService : IOfferService
         var userId = _userAccessor.UserId;
         if (userId == null)
         {
-            //todo
-            throw new ArgumentNullException(nameof(userId));
+            throw new ForbidException("Could not access user Name Identifier");
         }
 
         var offerId = await _offerRepository.Create(dto.ProductId, dto.GraphicsId, userId.Value, dto.Price, true);
@@ -110,11 +108,18 @@ public class OfferService : IOfferService
             return new Size
             {
                 Id = keyValuePair.Key,
-                Name = sizes.Where(x => x.Id == keyValuePair.Key).FirstOrDefault()?.Name
+                Name = sizes.FirstOrDefault(x => x.Id == keyValuePair.Key)?.Name!
             };
         }, keyValuePair => keyValuePair.Value);
 
         await _availableItemsRepository.CreateItems(sizeQuantityDictionary, offerId);
         return offerId;
+    }
+
+    public async Task Update(Guid id, UpdateOfferDto dto)
+    {
+        throw new NotImplementedException();
+        //todo
+        //await _offerRepository.Update(id);
     }
 }

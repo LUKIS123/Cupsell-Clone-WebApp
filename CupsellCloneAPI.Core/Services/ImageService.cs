@@ -1,6 +1,7 @@
 ﻿using CupsellCloneAPI.Core.Services.Interfaces;
 using CupsellCloneAPI.Database.BlobContainer.Models;
 using CupsellCloneAPI.Database.BlobContainer.Repositories;
+using Microsoft.AspNetCore.Http;
 
 namespace CupsellCloneAPI.Core.Services;
 
@@ -38,9 +39,9 @@ public class ImageService : IImageService
         return await _blobRepository.DownloadBlobFile(path);
     }
 
-    public Task<string> UploadOfferImage()
+    public async Task<string> UploadOfferImage(Guid offerId, IFormFile blobFile)
     {
-        throw new NotImplementedException();
-        //todo - image service
+        var basePath = $"{OfferCatalog}/{offerId}";
+        return await _blobRepository.UploadBlobFile(blobFile, basePath);
     }
 }

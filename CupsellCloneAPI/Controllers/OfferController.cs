@@ -1,5 +1,4 @@
 ﻿using CupsellCloneAPI.Core.Models;
-using CupsellCloneAPI.Core.Models.Dtos;
 using CupsellCloneAPI.Core.Models.Dtos.Offer;
 using CupsellCloneAPI.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -15,9 +14,10 @@ public class OfferController : ControllerBase
     private readonly IOfferService _offerService;
     private readonly IImageService _imageService;
 
-    public OfferController(IOfferService offerService)
+    public OfferController(IOfferService offerService, IImageService imageService)
     {
         _offerService = offerService;
+        _imageService = imageService;
     }
 
     [AllowAnonymous]
@@ -45,18 +45,19 @@ public class OfferController : ControllerBase
             new { offerId = createdOfferId });
     }
 
-    [HttpPost("{offerId}")]
+    [HttpPost("upload/{offerId}")]
     [Authorize(Roles = "Seller,Administrator")]
-    public async Task<ActionResult> UploadOfferImage()
+    public async Task<ActionResult> UploadOfferImage([FromRoute] Guid id, [FromForm] IFormFile blobFile)
     {
-        await _imageService.UploadOfferImage();
+        await _imageService.UploadOfferImage(id, blobFile);
         return Ok();
     }
 
-    [HttpPut("{offerId}")]
+    [HttpPut("update/{offerId}")]
     [Authorize(Roles = "Seller,Administrator")]
     public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] UpdateOfferDto dto)
     {
+        await _offerService.Update(id, dto);
         return Ok();
     }
 }

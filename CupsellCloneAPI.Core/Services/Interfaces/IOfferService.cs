@@ -8,5 +8,6 @@ namespace CupsellCloneAPI.Core.Services.Interfaces
         Task<PageResult<OfferDto>> GetOffers(SearchQuery searchQuery);
         Task<OfferDto> GetOfferById(Guid id);
         Task<Guid> Create(CreateOfferDto dto);
+        Task Update(Guid id, UpdateOfferDto dto);
     }
 }

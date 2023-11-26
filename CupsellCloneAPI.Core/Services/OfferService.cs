@@ -118,8 +118,27 @@ public class OfferService : IOfferService
 
     public async Task Update(Guid id, UpdateOfferDto dto)
     {
-        throw new NotImplementedException();
-        //todo
-        //await _offerRepository.Update(id);
+        // todo
+        var offer = await _offerRepository.GetById(id);
+        if (offer == null)
+        {
+            throw new NotFoundException("Offer not found");
+        }
+
+        await _offerRepository.Update(id, (dto.ProductId ?? offer.ProductId),
+            (dto.GraphicId ?? offer.GraphicId), offer.SellerId, (dto.Price ?? offer.Price),
+            (dto.IsAvailable ?? offer.IsAvailable));
+    }
+
+    public async Task Delete(Guid id)
+    {
+        // todo
+        var offer = _offerRepository.GetById(id);
+        if (offer == null)
+        {
+            throw new NotFoundException("Offer not found");
+        }
+
+        await _offerRepository.Delete(id);
     }
 }

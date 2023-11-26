@@ -9,5 +9,6 @@ namespace CupsellCloneAPI.Core.Services.Interfaces
         Task<OfferDto> GetOfferById(Guid id);
         Task<Guid> Create(CreateOfferDto dto);
         Task Update(Guid id, UpdateOfferDto dto);
+        Task Delete(Guid id);
     }
 }

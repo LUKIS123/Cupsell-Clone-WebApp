@@ -41,7 +41,6 @@ public class SmtpEmailCommunicationUtility : IEmailCommunicationUtility
         finally
         {
             await smtpClient.DisconnectAsync(true);
-            smtpClient.Dispose();
         }
 
         // Sent == Great success

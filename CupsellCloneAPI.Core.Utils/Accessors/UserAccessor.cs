@@ -12,7 +12,7 @@ namespace CupsellCloneAPI.Core.Utils.Accessors
             _httpContextAccessor = httpContextAccessor;
         }
 
-        private ClaimsPrincipal? UserClaimsPrincipal => _httpContextAccessor.HttpContext?.User;
+        public ClaimsPrincipal? UserClaimsPrincipal => _httpContextAccessor.HttpContext?.User;
 
         public Guid? UserId
         {

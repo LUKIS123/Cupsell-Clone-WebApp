@@ -61,6 +61,25 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORS
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("FrontEndClient", corsPolicyBuilder =>
+    {
+        var origins = builder.Configuration
+            .GetSection("AllowedOrigins")
+            .GetChildren()
+            .Select(x => x.Value)
+            .Where(x => x is not null)
+            .ToArray();
+
+        corsPolicyBuilder
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithExposedHeaders("Location")
+            .WithOrigins(origins!);
+    });
+});
 
 var app = builder.Build();
 
@@ -79,8 +98,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

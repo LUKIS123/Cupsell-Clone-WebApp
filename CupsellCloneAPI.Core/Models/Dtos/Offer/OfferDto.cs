@@ -14,7 +14,7 @@ namespace CupsellCloneAPI.Core.Models.Dtos.Offer
         public GraphicDto? Graphic { get; set; }
         public UserDto? Seller { get; set; }
 
-        public Dictionary<SizeDto, int> SizeQuantityDictionary { get; set; } = new();
+        public Dictionary<int, SizeQuantityDto> SizeQuantityDictionary { get; set; } = new();
         public IEnumerable<string> ImageUrls { get; set; } = default!;
     }
 }

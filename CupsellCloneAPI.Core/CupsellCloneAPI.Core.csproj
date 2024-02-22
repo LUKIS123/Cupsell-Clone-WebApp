@@ -11,6 +11,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\CupsellCloneAPI.Authentication\CupsellCloneAPI.Authentication.csproj" />
 		<ProjectReference Include="..\CupsellCloneAPI.Database\CupsellCloneAPI.Database.csproj" />
 		<ProjectReference Include="..\CupsellCloneAPI.Database.BlobContainer\CupsellCloneAPI.Database.BlobContainer.csproj" />
 		<ProjectReference Include="..\CupsellCloneAPI.Core.Utils\CupsellCloneAPI.Core.Utils.csproj" />

@@ -6,5 +6,6 @@ namespace CupsellCloneAPI.Core.Utils.Accessors
     {
         Guid? UserId { get; }
         string? Email { get; }
+        ClaimsPrincipal? UserClaimsPrincipal { get; }
     }
 }

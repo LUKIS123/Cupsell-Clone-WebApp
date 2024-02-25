@@ -9,7 +9,6 @@ namespace CupsellCloneAPI.Core.Models.Dtos.Offer
         public Guid Id { get; set; }
         public decimal Price { get; set; }
         public bool IsAvailable { get; set; }
-
         public ProductDto? Product { get; set; }
         public GraphicDto? Graphic { get; set; }
         public UserDto? Seller { get; set; }

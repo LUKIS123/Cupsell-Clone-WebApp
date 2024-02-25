@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CupsellCloneAPI.Core.Services;
 
-public class OfferService : IOfferService
+internal class OfferService : IOfferService
 {
     private readonly ILogger<IOfferService> _logger;
     private readonly IMapper _mapper;
@@ -46,17 +46,18 @@ public class OfferService : IOfferService
             searchQuery.SortDirection
         )).ToList();
 
-        var availableOffersItems =
-            await _availableItemsRepository.GetAvailableItemsByOffersIds(offers.Select(x => x.Id));
-
-        var offersImagesUris = await _imageService.GetOffersImagesUris(offers.Select(x => x.Id));
+        var availableOffersItemsTask = _availableItemsRepository.GetAvailableItemsByOffersIds(offers
+            .Select(x => x.Id));
+        var offersImagesUrisTask = _imageService.GetOffersImagesUris(offers.Select(x => x.Id));
+        var graphicImagesUrisTask = _imageService.GetGraphicsImagesUris(offers.Select(x => x.GraphicId));
+        await Task.WhenAll(availableOffersItemsTask, offersImagesUrisTask, graphicImagesUrisTask);
 
         var offerDtoList = offers
             .Select(offer =>
             {
                 var offerDto = _mapper.Map<OfferDto>(offer);
 
-                if (availableOffersItems.TryGetValue(offerDto.Id, out var offerItems))
+                if (availableOffersItemsTask.Result.TryGetValue(offerDto.Id, out var offerItems))
                 {
                     offerDto.SizeQuantityDictionary = offerItems
                         .ToDictionary(x => x.SizeId,
@@ -68,9 +69,15 @@ public class OfferService : IOfferService
                             });
                 }
 
-                if (offersImagesUris.TryGetValue(offerDto.Id, out var offerImageUris))
+                if (offersImagesUrisTask.Result.TryGetValue(offerDto.Id, out var offerImageUris))
                 {
                     offerDto.ImageUrls = offerImageUris;
+                }
+
+                if (offerDto.Graphic is not null &&
+                    graphicImagesUrisTask.Result.TryGetValue(offerDto.Graphic.Id, out var graphicImageUris))
+                {
+                    offerDto.Graphic.BlobUrl = graphicImageUris;
                 }
 
                 return offerDto;
@@ -83,6 +90,7 @@ public class OfferService : IOfferService
             PageSize = searchQuery.PageSize,
             PageNumber = searchQuery.PageNumber
         };
+
         return results;
     }
 
@@ -103,6 +111,13 @@ public class OfferService : IOfferService
                     Quantity = x.Quantity
                 });
         offerDto.ImageUrls = offerImageUrisTask.Result;
+
+        if (offerDto.Graphic is not null)
+        {
+            var graphicImagesUris = await _imageService.GetGraphicImageUri(offerDto.Graphic.Id);
+            offerDto.Graphic.BlobUrl = graphicImagesUris;
+        }
+
         return offerDto;
     }
 
@@ -114,25 +129,26 @@ public class OfferService : IOfferService
             throw new ForbidException("Could not access user Name Identifier");
         }
 
-        var offerId = await _offerRepository.Create(dto.ProductId, dto.GraphicsId, userId.Value, dto.Price, true);
-        var sizes = await _availableItemsRepository.GetSizes();
+        var createOfferTask = _offerRepository.Create(dto.ProductId, dto.GraphicsId, userId.Value, dto.Price, true);
+        var getSizesTask = _availableItemsRepository.GetSizes();
+        await Task.WhenAll(createOfferTask, getSizesTask);
 
         var sizeQuantityDictionary = dto.SizeIdQuantityDictionary.ToDictionary(keyValuePair =>
         {
             return new Size
             {
                 Id = keyValuePair.Key,
-                Name = sizes.FirstOrDefault(x => x.Id == keyValuePair.Key)?.Name!
+                Name = getSizesTask.Result.FirstOrDefault(x => x.Id == keyValuePair.Key)?.Name!
             };
         }, keyValuePair => keyValuePair.Value);
 
+        var offerId = createOfferTask.Result;
         await _availableItemsRepository.CreateItems(sizeQuantityDictionary, offerId);
         return offerId;
     }
 
     public async Task Update(Guid id, UpdateOfferDto dto)
     {
-        // todo sprawdzic
         var offer = await _offerRepository.GetById(id);
         if (offer is null)
         {
@@ -164,7 +180,6 @@ public class OfferService : IOfferService
 
     public async Task Delete(Guid id)
     {
-        // todo sprawdzic 
         var offer = _offerRepository.GetById(id);
         if (offer is null)
         {

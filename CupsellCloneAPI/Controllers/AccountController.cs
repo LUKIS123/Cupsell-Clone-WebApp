@@ -1,5 +1,6 @@
 ﻿using CupsellCloneAPI.Authentication.Models;
 using CupsellCloneAPI.Authentication.Services;
+using CupsellCloneAPI.Core.Models.Dtos.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,6 +30,14 @@ namespace CupsellCloneAPI.Controllers
         public async Task<ActionResult<AuthenticatedUserResponseDto>> Login([FromBody] LoginUserDto dto)
         {
             var response = await _accountService.LoginUser(dto);
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpGet("details")]
+        public async Task<ActionResult<UserDto>> GetUserDetails()
+        {
+            var response = await _accountService.GetUserDetails();
             return Ok(response);
         }
 

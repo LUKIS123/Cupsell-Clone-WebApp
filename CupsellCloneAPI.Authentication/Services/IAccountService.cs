@@ -10,5 +10,6 @@ namespace CupsellCloneAPI.Authentication.Services
         Task DeleteUserRefreshTokens();
         Task ResendUserVerificationEmail();
         Task VerifyUser(string encryptedToken);
+        Task<UserDetailsDto?> GetUserDetails();
     }
 }

@@ -1,3 +1,4 @@
+using CupsellCloneAPI.Core.Exceptions;
 using CupsellCloneAPI.Database.BlobContainer.Repositories;
 using CupsellCloneAPI.Database.Entities.Product;
 using CupsellCloneAPI.Database.Models;
@@ -39,7 +40,21 @@ public class WeatherForecastController : ControllerBase
     [HttpPost("upload")]
     public async Task<ActionResult> UploadFile([FromForm] IFormFile blobFile)
     {
-        await _blobRepository.UploadBlobFile(blobFile, "offers/exampleOfferId");
+        var length = blobFile.Length;
+        if (length < 0)
+        {
+            throw new BadFileException("File length is less than 0");
+        }
+
+        await using var fileStream = blobFile.OpenReadStream();
+        var bytes = new byte[length];
+        var read = await fileStream.ReadAsync(bytes.AsMemory(0, (int)blobFile.Length));
+        if (read != length)
+        {
+            throw new BadFileException("File length is not equal to read bytes");
+        }
+
+        await _blobRepository.UploadBlobFile(bytes, blobFile.FileName, "offers/exampleOfferId");
         return Ok();
     }
 
@@ -54,6 +69,6 @@ public class WeatherForecastController : ControllerBase
     public async Task<ActionResult> DownloadFile([FromQuery] string path)
     {
         var result = await _blobRepository.DownloadBlobFile(path);
-        return File(result.FileStream, result.ContentType);
+        return File(result.Item1, result.Item2);
     }
 }

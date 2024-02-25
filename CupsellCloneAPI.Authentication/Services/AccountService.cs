@@ -177,6 +177,34 @@ public class AccountService : IAccountService
         await Task.WhenAll(updateStatus, deleteVerificationToken);
     }
 
+    public async Task<UserDetailsDto?> GetUserDetails()
+    {
+        var userId = _userAccessor.UserId;
+        if (!userId.HasValue)
+        {
+            throw new AuthenticationErrorException("You need to be logged in to perform this action");
+        }
+
+        var user = await _userRepository.GetById(userId.Value);
+        if (user is null)
+        {
+            throw new AuthenticationErrorException("Authentication error");
+        }
+
+        return new UserDetailsDto
+        {
+            Email = user.Email,
+            Username = user.Username,
+            PhoneNumber = user.PhoneNumber,
+            Name = user.Name,
+            LastName = user.LastName,
+            DateOfBirth = user.DateOfBirth,
+            Address = user.Address,
+            AccountType = user.Role.Name,
+            IsVerified = user.IsVerified
+        };
+    }
+
 
     // public async Task<string> GenerateJwt(LoginUserDto dto)
     // {

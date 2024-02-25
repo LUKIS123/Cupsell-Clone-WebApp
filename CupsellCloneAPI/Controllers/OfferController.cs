@@ -29,7 +29,7 @@ public class OfferController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpGet("{offerId}")]
+    [HttpGet("{offerId:guid}")]
     public async Task<ActionResult<OfferDto>> GetById([FromRoute] Guid offerId)
     {
         var offerDto = await _offerService.GetOfferById(offerId);
@@ -45,19 +45,27 @@ public class OfferController : ControllerBase
             new { offerId = createdOfferId });
     }
 
-    [HttpPost("upload/{offerId}")]
+    [HttpPost("upload/{offerId:guid}")]
     [Authorize(Roles = "Seller,Administrator")]
-    public async Task<ActionResult> UploadOfferImage([FromRoute] Guid id, [FromForm] IFormFile blobFile)
+    public async Task<ActionResult> UploadOfferImage([FromRoute] Guid offerId, [FromForm] IFormFile blobFile)
     {
-        await _imageService.UploadOfferImage(id, blobFile);
+        await _imageService.UploadOfferImage(offerId, blobFile);
         return Ok();
     }
 
-    [HttpPut("update/{offerId}")]
+    [HttpPut("update/{offerId:guid}")]
     [Authorize(Roles = "Seller,Administrator")]
-    public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] UpdateOfferDto dto)
+    public async Task<ActionResult> Update([FromRoute] Guid offerId, [FromBody] UpdateOfferDto dto)
     {
-        await _offerService.Update(id, dto);
+        await _offerService.Update(offerId, dto);
+        return Ok();
+    }
+
+    [HttpDelete("delete/{offerId:guid}")]
+    [Authorize(Roles = "Seller,Administrator")]
+    public async Task<ActionResult> Delete([FromRoute] Guid offerId)
+    {
+        await _offerService.Delete(offerId);
         return Ok();
     }
 }

@@ -7,9 +7,9 @@ namespace CupsellCloneAPI.Controllers;
 [Route("cupsellclone/assets")]
 public class AssetsController : ControllerBase
 {
-    private readonly IImageService _imageService;
+    private readonly IAssetsService _imageService;
 
-    public AssetsController(IImageService imageService)
+    public AssetsController(IAssetsService imageService)
     {
         _imageService = imageService;
     }

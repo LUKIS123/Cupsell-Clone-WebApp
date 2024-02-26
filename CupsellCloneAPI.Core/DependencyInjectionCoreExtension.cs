@@ -9,8 +9,10 @@ public static class DependencyInjectionCoreExtension
 {
     public static IServiceCollection AddCoreServices(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped<IImageService, ImageService>();
+        serviceCollection.AddScoped<IAssetsService, AssetsService>();
         serviceCollection.AddScoped<IOfferService, OfferService>();
+        serviceCollection.AddScoped<IProductService, ProductService>();
+        serviceCollection.AddScoped<IGraphicService, GraphicService>();
 
         return serviceCollection;
     }

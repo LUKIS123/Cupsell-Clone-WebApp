@@ -12,9 +12,9 @@ namespace CupsellCloneAPI.Controllers;
 public class OfferController : ControllerBase
 {
     private readonly IOfferService _offerService;
-    private readonly IImageService _imageService;
+    private readonly IAssetsService _imageService;
 
-    public OfferController(IOfferService offerService, IImageService imageService)
+    public OfferController(IOfferService offerService, IAssetsService imageService)
     {
         _offerService = offerService;
         _imageService = imageService;

@@ -18,7 +18,7 @@ internal class OfferService : IOfferService
     private readonly IMapper _mapper;
     private readonly IOfferRepository _offerRepository;
     private readonly IAvailableItemsRepository _availableItemsRepository;
-    private readonly IImageService _imageService;
+    private readonly IAssetsService _assetsService;
     private readonly IUserAccessor _userAccessor;
     private readonly IAuthorizationService _authorizationService;
 
@@ -27,14 +27,14 @@ internal class OfferService : IOfferService
         IMapper mapper,
         IOfferRepository offerRepository,
         IAvailableItemsRepository availableItemsRepository,
-        IImageService imageService, IUserAccessor userAccessor,
+        IAssetsService assetsService, IUserAccessor userAccessor,
         IAuthorizationService authorizationService)
     {
         _logger = logger;
         _mapper = mapper;
         _offerRepository = offerRepository;
         _availableItemsRepository = availableItemsRepository;
-        _imageService = imageService;
+        _assetsService = assetsService;
         _userAccessor = userAccessor;
         _authorizationService = authorizationService;
     }
@@ -48,8 +48,8 @@ internal class OfferService : IOfferService
 
         var availableOffersItemsTask = _availableItemsRepository.GetAvailableItemsByOffersIds(offers
             .Select(x => x.Id));
-        var offersImagesUrisTask = _imageService.GetOffersImagesUris(offers.Select(x => x.Id));
-        var graphicImagesUrisTask = _imageService.GetGraphicsImagesUris(offers.Select(x => x.GraphicId));
+        var offersImagesUrisTask = _assetsService.GetOffersImagesUris(offers.Select(x => x.Id));
+        var graphicImagesUrisTask = _assetsService.GetGraphicsImagesUris(offers.Select(x => x.GraphicId));
         await Task.WhenAll(availableOffersItemsTask, offersImagesUrisTask, graphicImagesUrisTask);
 
         var offerDtoList = offers
@@ -98,7 +98,7 @@ internal class OfferService : IOfferService
     {
         var offerTask = _offerRepository.GetById(id);
         var availableItemsTask = _availableItemsRepository.GetAvailableItemsByOfferId(id);
-        var offerImageUrisTask = _imageService.GetOfferImageUris(id);
+        var offerImageUrisTask = _assetsService.GetOfferImageUris(id);
         await Task.WhenAll(offerTask, availableItemsTask, offerImageUrisTask);
 
         var offerDto = _mapper.Map<OfferDto>(offerTask.Result);
@@ -114,7 +114,7 @@ internal class OfferService : IOfferService
 
         if (offerDto.Graphic is not null)
         {
-            var graphicImagesUris = await _imageService.GetGraphicImageUri(offerDto.Graphic.Id);
+            var graphicImagesUris = await _assetsService.GetGraphicImageUri(offerDto.Graphic.Id);
             offerDto.Graphic.BlobUrl = graphicImagesUris;
         }
 

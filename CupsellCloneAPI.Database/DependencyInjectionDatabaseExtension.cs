@@ -27,6 +27,7 @@ public static class DependencyInjectionDatabaseExtension
         serviceCollection.AddScoped<IProductRepository, ProductRepository>();
         serviceCollection.AddScoped<IGraphicRepository, GraphicRepository>();
         serviceCollection.AddScoped<IAvailableItemsRepository, AvailableItemsRepository>();
+        serviceCollection.AddScoped<IProductTypeRepository, ProductTypeRepository>();
 
         return serviceCollection;
     }

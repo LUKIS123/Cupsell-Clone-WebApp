@@ -25,6 +25,7 @@ SELECT TOP 1
     P.Name as {nameof(Product.Name)},
     P.Description as {nameof(Product.Description)},
     P.ProductTypeId as {nameof(Product.ProductTypeId)},
+    P.SellerId as {nameof(Product.SellerId)},
     T.Id as {nameof(ProductType.Id)},
     T.Name as {nameof(ProductType.Name)}
 FROM [products].[Products] P
@@ -36,13 +37,8 @@ WHERE P.Id = @Id";
         return result.FirstOrDefault();
     }
 
-    public async Task<IEnumerable<Product>> GetFiltered(
-        string? searchPhrase,
-        int pageNumber,
-        int pageSize,
-        FilterOptionEnum sortBy,
-        SortDirectionEnum sortDirection
-    )
+    public async Task<IEnumerable<Product>> GetFiltered(string? searchPhrase, int pageNumber, int pageSize,
+        FilterOptionEnum sortBy, SortDirectionEnum sortDirection, Guid sellerId)
     {
         var sb = new StringBuilder($@"
 SELECT
@@ -91,19 +87,22 @@ FETCH NEXT @FetchRows ROWS ONLY");
         );
     }
 
-    public async Task<Guid> Create(string name, string? description, int typeId)
+    public async Task<Guid> Create(string name, string? description, int typeId, Guid sellerId)
     {
         using var conn = _connectionFactory.GetSqlDbConnection();
         var newGuid = Guid.NewGuid();
         const string sql = @"
 INSERT INTO [products].[Products]
-(Id, Name, Description, ProductTypeId)
+(Id, Name, Description, ProductTypeId, SellerId)
 VALUES
-(@Id, @Name, @Description, @ProductTypeId)";
+(@Id, @Name, @Description, @ProductTypeId, @SellerId)";
 
         await conn.ExecuteAsync(
             sql: sql,
-            param: new { Id = newGuid, Name = name, Description = description, ProductTypeId = typeId }
+            param: new
+            {
+                Id = newGuid, Name = name, Description = description, ProductTypeId = typeId, SellerId = sellerId
+            }
         );
 
         return newGuid;

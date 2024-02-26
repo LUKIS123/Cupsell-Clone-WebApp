@@ -5,7 +5,7 @@ namespace CupsellCloneAPI.Core.Services.Interfaces
 {
     public interface IProductService
     {
-        Task<PageResult<ProductDto>> GetAllProducts();
+        Task<PageResult<ProductDto>> GetProducts(SearchQuery searchQuery);
         Task<ProductDto> GetProductById(Guid id);
         Task<Guid> CreateProduct(CreateProductDto newProduct);
         Task UpdateProduct(Guid id, CreateProductDto updatedProduct);

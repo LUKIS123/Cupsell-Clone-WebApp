@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace CupsellCloneAPI.Core.Services.Interfaces
 {
-    public interface IImageService
+    public interface IAssetsService
     {
         Task<Dictionary<Guid, IEnumerable<string>>> GetOffersImagesUris(IEnumerable<Guid> offersId);
         Task<Dictionary<Guid, string>> GetGraphicsImagesUris(IEnumerable<Guid> graphicId);

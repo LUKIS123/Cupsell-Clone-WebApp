@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace CupsellCloneAPI.Core.Services;
 
-internal class ImageService : IImageService
+internal class AssetsService : IAssetsService
 {
     private readonly IBlobRepository _blobRepository;
     public static readonly List<string> ImageExtensions = [".JPG", ".JPEG", ".PNG"];
@@ -15,7 +15,7 @@ internal class ImageService : IImageService
     public static readonly string GraphicCatalog = "graphics";
     public static readonly string ProductTypeCatalog = "productTypes";
 
-    public ImageService(IBlobRepository blobRepository)
+    public AssetsService(IBlobRepository blobRepository)
     {
         _blobRepository = blobRepository;
     }

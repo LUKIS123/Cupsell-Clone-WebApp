@@ -4,6 +4,7 @@ using CupsellCloneAPI.Core.Utils;
 using CupsellCloneAPI.Database;
 using CupsellCloneAPI.Database.Authentication;
 using CupsellCloneAPI.Database.BlobContainer;
+using CupsellCloneAPI.EmailCommunication;
 using CupsellCloneAPI.Middleware;
 using CupsellCloneAPI.Validators;
 using FluentValidation.AspNetCore;
@@ -39,6 +40,7 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddUtilities(builder.Configuration);
 builder.Services.AddAccessors();
+builder.Services.AddEmailCommunication(builder.Configuration);
 
 // NLog: Setup NLog for Dependency injection
 builder.Logging.SetMinimumLevel(LogLevel.Trace);

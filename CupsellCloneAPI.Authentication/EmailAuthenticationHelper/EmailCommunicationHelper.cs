@@ -1,4 +1,4 @@
-﻿using CupsellCloneAPI.Core.Utils.EmailCommunication;
+﻿using CupsellCloneAPI.EmailCommunication.EmailCommunication;
 
 namespace CupsellCloneAPI.Authentication.EmailAuthenticationHelper
 {

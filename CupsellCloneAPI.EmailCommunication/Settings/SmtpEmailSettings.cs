@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace CupsellCloneAPI.Core.Utils.EmailCommunication.Settings
+﻿namespace CupsellCloneAPI.EmailCommunication.Settings
 {
     public class SmtpEmailSettings
     {

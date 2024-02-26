@@ -1,7 +1,7 @@
-﻿using CupsellCloneAPI.Core.Utils.EmailCommunication.Settings;
+﻿using CupsellCloneAPI.EmailCommunication.Settings;
 using MimeKit;
 
-namespace CupsellCloneAPI.Core.Utils.EmailCommunication;
+namespace CupsellCloneAPI.EmailCommunication.EmailCommunication;
 
 public class SmtpEmailCommunicationUtility : IEmailCommunicationUtility
 {

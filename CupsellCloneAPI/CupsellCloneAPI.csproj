@@ -28,6 +28,7 @@
 		<ProjectReference Include="..\CupsellCloneAPI.Authentication\CupsellCloneAPI.Authentication.csproj" />
 		<ProjectReference Include="..\CupsellCloneAPI.Database.Authentication\CupsellCloneAPI.Database.Authentication.csproj" />
 		<ProjectReference Include="..\CupsellCloneAPI.Core.Utils\CupsellCloneAPI.Core.Utils.csproj" />
+		<ProjectReference Include="..\CupsellCloneAPI.EmailCommunication\CupsellCloneAPI.EmailCommunication.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

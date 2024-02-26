@@ -1,8 +1,8 @@
-﻿using CupsellCloneAPI.Core.Utils.EmailCommunication.Settings;
+﻿using CupsellCloneAPI.EmailCommunication.Settings;
 using RestSharp;
 using RestSharp.Authenticators;
 
-namespace CupsellCloneAPI.Core.Utils.EmailCommunication;
+namespace CupsellCloneAPI.EmailCommunication.EmailCommunication;
 
 public class ApiEmailCommunicationUtility : IEmailCommunicationUtility
 {

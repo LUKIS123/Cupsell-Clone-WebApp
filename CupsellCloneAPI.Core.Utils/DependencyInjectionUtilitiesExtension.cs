@@ -1,6 +1,4 @@
-﻿using CupsellCloneAPI.Core.Utils.EmailCommunication;
-using CupsellCloneAPI.Core.Utils.EmailCommunication.Settings;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CupsellCloneAPI.Core.Utils.Encryption;
 using CupsellCloneAPI.Core.Utils.Encryption.Settings;
@@ -19,23 +17,6 @@ namespace CupsellCloneAPI.Core.Utils
             IConfiguration configuration
         )
         {
-            var result = bool.TryParse(configuration[$"{EmailSectionName}:EnableApiEmailCommunication"],
-                out var condition);
-            if (result && condition)
-            {
-                var settings = new ApiEmailSettings();
-                configuration.GetSection($"{EmailSectionName}:ApiCommunicationSettings").Bind(settings);
-                serviceCollection.AddSingleton(settings);
-                serviceCollection.AddScoped<IEmailCommunicationUtility, ApiEmailCommunicationUtility>();
-            }
-            else
-            {
-                var settings = new SmtpEmailSettings();
-                configuration.GetSection($"{EmailSectionName}:SmtpCommunicationSettings").Bind(settings);
-                serviceCollection.AddSingleton(settings);
-                serviceCollection.AddScoped<IEmailCommunicationUtility, SmtpEmailCommunicationUtility>();
-            }
-
             var encryptionSettings = new EncryptionSettings
             {
                 EncryptionKey = configuration[$"{EncryptionSectionName}:EncryptionKey"] ??

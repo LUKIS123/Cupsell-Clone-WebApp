@@ -15,3 +15,5 @@ CupsellCloneAPI.Database.Authentication/bin
 CupsellCloneAPI.Database.Authentication/obj
 CupsellCloneAPI.Core.Utils/bin
 CupsellCloneAPI.Core.Utils/obj
+CupsellCloneAPI.EmailCommunication/bin
+CupsellCloneAPI.EmailCommunication/obj

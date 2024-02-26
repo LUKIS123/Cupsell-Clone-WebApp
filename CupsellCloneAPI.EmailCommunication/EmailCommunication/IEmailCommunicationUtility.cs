@@ -1,4 +1,4 @@
-﻿namespace CupsellCloneAPI.Core.Utils.EmailCommunication
+﻿namespace CupsellCloneAPI.EmailCommunication.EmailCommunication
 {
     public interface IEmailCommunicationUtility
     {

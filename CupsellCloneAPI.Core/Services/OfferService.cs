@@ -41,10 +41,12 @@ internal class OfferService : IOfferService
 
     public async Task<PageResult<OfferDto>> GetOffers(SearchQuery searchQuery)
     {
-        var offers = (await _offerRepository.GetFiltered(
+        var offersCountTuple = await _offerRepository.GetFiltered(
             searchQuery.SearchPhrase, searchQuery.PageNumber, searchQuery.PageSize, searchQuery.SortBy,
             searchQuery.SortDirection
-        )).ToList();
+        );
+        var offers = offersCountTuple.Offers
+            .ToList();
 
         var availableOffersItemsTask = _availableItemsRepository.GetAvailableItemsByOffersIds(offers
             .Select(x => x.Id));
@@ -86,7 +88,7 @@ internal class OfferService : IOfferService
         var results = new PageResult<OfferDto>
         {
             Items = offerDtoList,
-            TotalItemsCount = offerDtoList.Count,
+            TotalItemsCount = offersCountTuple.Count,
             PageSize = searchQuery.PageSize,
             PageNumber = searchQuery.PageNumber
         };
@@ -129,7 +131,8 @@ internal class OfferService : IOfferService
             throw new ForbidException("Could not access user Name Identifier");
         }
 
-        var createOfferTask = _offerRepository.Create(dto.ProductId, dto.GraphicsId, userId.Value, dto.Price, true);
+        var createOfferTask = _offerRepository.Create(dto.ProductId, dto.GraphicsId, userId.Value, dto.Price, true,
+            dto.Description);
         var getSizesTask = _availableItemsRepository.GetSizes();
         await Task.WhenAll(createOfferTask, getSizesTask);
 
@@ -175,7 +178,7 @@ internal class OfferService : IOfferService
 
         await _offerRepository.Update(id, (dto.ProductId ?? offer.ProductId),
             (dto.GraphicId ?? offer.GraphicId), offer.SellerId, (dto.Price ?? offer.Price),
-            (dto.IsAvailable ?? offer.IsAvailable));
+            (dto.IsAvailable ?? offer.IsAvailable), (dto.Description ?? offer.Description));
     }
 
     public async Task Delete(Guid id)

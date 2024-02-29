@@ -11,6 +11,8 @@ namespace CupsellCloneAPI.Database.Entities.Product
         [ForeignKey("Seller")] public required Guid SellerId { get; set; }
         public required decimal Price { get; set; }
         public required bool IsAvailable { get; set; }
+        public string? Description { get; set; }
+
 
         public virtual required Product Product { get; set; }
         public virtual required Graphic Graphic { get; set; }

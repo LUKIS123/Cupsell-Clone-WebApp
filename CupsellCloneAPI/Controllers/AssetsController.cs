@@ -28,10 +28,10 @@ public class AssetsController : ControllerBase
         return File(result.FileStream, result.ContentType);
     }
 
-    [HttpGet("productTypes/{productTypeId:int}/{imageName}")]
-    public async Task<ActionResult> GetProductTypeImage([FromRoute] int productTypeId, [FromRoute] string imageName)
+    [HttpGet("productTypes/{productId:guid}/{imageName}")]
+    public async Task<ActionResult> GetProductTypeImage([FromRoute] Guid productId, [FromRoute] string imageName)
     {
-        var result = await _imageService.GetProductTypeImage(productTypeId, imageName);
+        var result = await _imageService.GetProductImage(productId, imageName);
         return File(result.FileStream, result.ContentType);
     }
 }

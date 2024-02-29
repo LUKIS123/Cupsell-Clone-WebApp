@@ -7,12 +7,14 @@ namespace CupsellCloneAPI.Core.Services.Interfaces
     {
         Task<Dictionary<Guid, IEnumerable<string>>> GetOffersImagesUris(IEnumerable<Guid> offersId);
         Task<Dictionary<Guid, string>> GetGraphicsImagesUris(IEnumerable<Guid> graphicId);
-        Task<Dictionary<int, IEnumerable<string>>> GetProductTypeImagesUris(IEnumerable<int> productId);
+        Task<Dictionary<Guid, string>> GetProductsImagesUris(IEnumerable<Guid> productId);
         Task<IEnumerable<string>> GetOfferImageUris(Guid offerId);
         Task<string?> GetGraphicImageUri(Guid graphicId);
+        Task<string?> GetProductImageUri(Guid productId);
         Task<BlobObject> GetOfferImage(Guid offerName, string imageName);
         Task<BlobObject> GetGraphicImage(Guid graphicId, string imageName);
-        Task<BlobObject> GetProductTypeImage(int productTypId, string imageName);
+        Task<BlobObject> GetProductImage(Guid productId, string imageName);
         Task<string> UploadOfferImage(Guid offerId, IFormFile blobFile);
+        Task<string> UploadProductImage(Guid productId, IFormFile blobFile);
     }
 }

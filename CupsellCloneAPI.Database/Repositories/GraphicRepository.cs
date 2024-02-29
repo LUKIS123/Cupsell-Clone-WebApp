@@ -22,6 +22,7 @@ SELECT TOP 1
     G.Id as {nameof(Graphic.Id)},
     G.Name as {nameof(Graphic.Name)},
     G.SellerId as {nameof(Graphic.SellerId)},
+    G.Description as {nameof(Graphic.Description)},
     U.Id as {nameof(User.Id)},
     U.Email as {nameof(User.Email)},
     U.Username as {nameof(User.Username)},
@@ -52,6 +53,7 @@ SELECT
     G.Id as {nameof(Graphic.Id)},
     G.Name as {nameof(Graphic.Name)},
     G.SellerId as {nameof(Graphic.SellerId)},
+    G.Description as {nameof(Graphic.Description)},
     U.Id as {nameof(User.Id)},
     U.Email as {nameof(User.Email)},
     U.Username as {nameof(User.Username)},
@@ -74,19 +76,19 @@ WHERE G.SellerId = @SellerId";
         return await QueryGraphicsAsync(sql, new { SellerId = sellerId });
     }
 
-    public async Task<Guid> Create(string name, Guid sellerId)
+    public async Task<Guid> Create(string name, Guid sellerId, string? description)
     {
         using var conn = _connectionFactory.GetSqlDbConnection();
         var newGuid = Guid.NewGuid();
         const string sql = @"
 INSERT INTO [products].[Graphics]
-(Id, Name, SellerId)
+(Id, Name, SellerId, Description)
 VALUES
-(@Id, @Name, @SellerId)";
+(@Id, @Name, @SellerId, @Description)";
 
         await conn.ExecuteAsync(
             sql: sql,
-            param: new { Id = newGuid, Name = name, SellerId = sellerId }
+            param: new { Id = newGuid, Name = name, SellerId = sellerId, Description = description }
         );
 
         return newGuid;
@@ -104,18 +106,19 @@ WHERE Id = @Id";
             param: new { Id = id });
     }
 
-    public async Task Update(Guid id, string newName)
+    public async Task Update(Guid id, string newName, string? description)
     {
         using var conn = _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 UPDATE [products].[Graphics]
 SET
     Name = @Name,
+    Description = @Description
 WHERE Id = @Id";
 
         await conn.ExecuteAsync(
             sql: sql,
-            param: new { Id = id, Name = newName }
+            param: new { Id = id, Name = newName, Description = description }
         );
     }
 

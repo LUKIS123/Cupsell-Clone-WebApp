@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
+using CupsellCloneAPI.Core.Exceptions;
 using CupsellCloneAPI.Core.Models;
 using CupsellCloneAPI.Core.Models.Dtos.Product;
 using CupsellCloneAPI.Core.Services.Interfaces;
-using CupsellCloneAPI.Core.Utils.Accessors;
 using CupsellCloneAPI.Database.Repositories.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 
 namespace CupsellCloneAPI.Core.Services
@@ -15,50 +14,101 @@ namespace CupsellCloneAPI.Core.Services
         private readonly IMapper _mapper;
         private readonly IProductRepository _productRepository;
         private readonly IAssetsService _assetsService;
-        private readonly IUserAccessor _userAccessor;
-        private readonly IAuthorizationService _authorizationService;
 
         public ProductService(ILogger<IProductService> logger, IMapper mapper, IProductRepository productRepository,
-            IAssetsService assetsService, IUserAccessor userAccessor, IAuthorizationService authorizationService)
+            IAssetsService assetsService)
         {
             _logger = logger;
             _mapper = mapper;
             _productRepository = productRepository;
             _assetsService = assetsService;
-            _userAccessor = userAccessor;
-            _authorizationService = authorizationService;
         }
 
         public async Task<PageResult<ProductDto>> GetProducts(SearchQuery searchQuery)
         {
-            var userId = _userAccessor.UserId;
-
-            var products = (await _productRepository.GetFiltered(
+            var productsCountTuple = await _productRepository.GetFiltered(
                 searchQuery.SearchPhrase, searchQuery.PageNumber, searchQuery.PageSize, searchQuery.SortBy,
-                searchQuery.SortDirection, userId.Value
-            )).ToList();
+                searchQuery.SortDirection);
+            var products = productsCountTuple.Products
+                .ToList();
+            var productImagesUris = await _assetsService.GetProductsImagesUris(
+                products.Select(x => x.Id));
 
-            throw new NotImplementedException();
+            var productDtoList = products.Select(product =>
+            {
+                var productDto = _mapper.Map<ProductDto>(product);
+
+                if (productImagesUris.TryGetValue(productDto.Id, out var imageUri))
+                {
+                    productDto.ImageUri = imageUri;
+                }
+
+                return productDto;
+            }).ToList();
+
+            return new PageResult<ProductDto>
+            {
+                Items = productDtoList,
+                TotalItemsCount = productsCountTuple.Count,
+                PageNumber = searchQuery.PageNumber,
+                PageSize = searchQuery.PageSize
+            };
         }
 
-        public Task<ProductDto> GetProductById(Guid id)
+        public async Task<ProductDto> GetProductById(Guid id)
         {
-            throw new NotImplementedException();
+            var productTask = _productRepository.GetById(id);
+            var productImageTask = _assetsService.GetProductImageUri(id);
+            await Task.WhenAll(productTask, productImageTask);
+
+            var productDto = _mapper.Map<ProductDto>(productTask.Result);
+            productDto.ImageUri = productImageTask.Result;
+
+            return productDto;
         }
 
-        public Task<Guid> CreateProduct(CreateProductDto newProduct)
+        public async Task<Guid> CreateProduct(CreateProductDto newProduct)
         {
-            throw new NotImplementedException();
+            var productTypes = await _productRepository.GetProductTypes();
+
+            var productTypeMatch = productTypes.FirstOrDefault(x =>
+                x.Name.Equals(newProduct.ProductTypeName, StringComparison.CurrentCultureIgnoreCase));
+            if (productTypeMatch is null)
+            {
+                throw new NotFoundException($"Product type: {newProduct.ProductTypeName} not found");
+            }
+
+            return await _productRepository.Create(newProduct.Name, newProduct.Description, productTypeMatch.Id);
         }
 
-        public Task UpdateProduct(Guid id, CreateProductDto updatedProduct)
+        public async Task UpdateProduct(Guid id, UpdateProductDto updatedProduct)
         {
-            throw new NotImplementedException();
+            var productTypesTask = _productRepository.GetProductTypes();
+            var productTask = _productRepository.GetById(id);
+            await Task.WhenAll(productTypesTask, productTask);
+
+            if (productTask.Result is null)
+            {
+                throw new NotFoundException($"Product with id:{id} not found");
+            }
+
+            var productTypeMatch = productTypesTask.Result.FirstOrDefault(x =>
+                x.Name.Equals(updatedProduct.ProductTypeName, StringComparison.CurrentCultureIgnoreCase));
+            if (productTypeMatch is null)
+            {
+                throw new NotFoundException($"Product type:{updatedProduct.ProductTypeName?.ToUpper()} not found");
+            }
+
+            _logger.LogInformation("Product with id:{ProductId} UPDATE action invoked...", id);
+
+            await _productRepository.Update(id, updatedProduct.Name ?? productTask.Result.Name,
+                updatedProduct.Description ?? productTask.Result.Description, productTypeMatch.Id);
         }
 
-        public Task DeleteProduct(Guid id)
+        public async Task DeleteProduct(Guid id)
         {
-            throw new NotImplementedException();
+            _logger.LogInformation("Product with id:{ProductId} DELETE action invoked...", id);
+            await _productRepository.Delete(id);
         }
     }
 }

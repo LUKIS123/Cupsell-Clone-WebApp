@@ -6,5 +6,6 @@
         public required string Name { get; set; }
         public string? Description { get; set; }
         public required string ProductTypeName { get; set; }
+        public string? ImageUri { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CupsellCloneAPI.Core.Models.Dtos.Graphic;
+﻿using CupsellCloneAPI.Core.Models;
+using CupsellCloneAPI.Core.Models.Dtos.Graphic;
 using CupsellCloneAPI.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +20,15 @@ public class GraphicController : ControllerBase
         _imageService = imageService;
     }
 
+    [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<GraphicDto>>> Get()
+    public async Task<ActionResult<IEnumerable<GraphicDto>>> Get([FromQuery] SearchQuery searchQuery)
     {
-        var graphicDtos = await _graphicService.GetAll();
+        var graphicDtos = await _graphicService.GetAll(searchQuery);
         return Ok(graphicDtos);
     }
 
+    [AllowAnonymous]
     [HttpGet("{graphicId:guid}")]
     public async Task<ActionResult<GraphicDto>> GetById([FromRoute] Guid graphicId)
     {

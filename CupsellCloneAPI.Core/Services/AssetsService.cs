@@ -13,7 +13,7 @@ internal class AssetsService : IAssetsService
 
     public static readonly string OfferCatalog = "offers";
     public static readonly string GraphicCatalog = "graphics";
-    public static readonly string ProductTypeCatalog = "productTypes";
+    public static readonly string ProductCatalog = "products";
 
     public AssetsService(IBlobRepository blobRepository)
     {
@@ -22,27 +22,38 @@ internal class AssetsService : IAssetsService
 
     public async Task<Dictionary<Guid, IEnumerable<string>>> GetOffersImagesUris(IEnumerable<Guid> offersId)
     {
-        return await _blobRepository.ListBlobsByGuids(OfferCatalog, offersId);
+        return await _blobRepository
+            .ListBlobsByGuids(OfferCatalog, offersId);
     }
 
     public async Task<Dictionary<Guid, string>> GetGraphicsImagesUris(IEnumerable<Guid> graphicId)
     {
-        return await _blobRepository.ListBlobByGuids(GraphicCatalog, graphicId);
+        return await _blobRepository
+            .ListBlobByGuids(GraphicCatalog, graphicId);
     }
 
-    public async Task<Dictionary<int, IEnumerable<string>>> GetProductTypeImagesUris(IEnumerable<int> productId)
+    public async Task<Dictionary<Guid, string>> GetProductsImagesUris(IEnumerable<Guid> productId)
     {
-        return await _blobRepository.ListBlobsByIds(ProductTypeCatalog, productId);
+        return await _blobRepository
+            .ListBlobByGuids(ProductCatalog, productId);
     }
 
     public async Task<IEnumerable<string>> GetOfferImageUris(Guid offerId)
     {
-        return await _blobRepository.ListBlobs(OfferCatalog, offerId);
+        return await _blobRepository
+            .ListBlobs(OfferCatalog, offerId);
     }
 
     public async Task<string?> GetGraphicImageUri(Guid graphicId)
     {
-        return await _blobRepository.ListBlob(GraphicCatalog, graphicId);
+        return await _blobRepository
+            .ListBlob(GraphicCatalog, graphicId);
+    }
+
+    public async Task<string?> GetProductImageUri(Guid productId)
+    {
+        return await _blobRepository
+            .ListBlob(ProductCatalog, productId);
     }
 
     public async Task<BlobObject> GetOfferImage(Guid offerId, string imageName)
@@ -59,30 +70,26 @@ internal class AssetsService : IAssetsService
         return MapToBlobObject(streamContentTypeTuple.Item1, streamContentTypeTuple.Item2, path);
     }
 
-    public async Task<BlobObject> GetProductTypeImage(int productTypId, string imageName)
+    public async Task<BlobObject> GetProductImage(Guid productId, string imageName)
     {
-        var path = $"productTypes/{productTypId}/{imageName}";
+        var path = $"productTypes/{productId}/{imageName}";
         var streamContentTypeTuple = await _blobRepository.DownloadBlobFile(path);
         return MapToBlobObject(streamContentTypeTuple.Item1, streamContentTypeTuple.Item2, path);
     }
 
     public async Task<string> UploadOfferImage(Guid offerId, IFormFile blobFile)
     {
-        var length = blobFile.Length;
-        if (length < 0)
-        {
-            throw new BadFileException("File length is less than 0");
-        }
-
-        await using var fileStream = blobFile.OpenReadStream();
-        var bytes = new byte[length];
-        var read = await fileStream.ReadAsync(bytes.AsMemory(0, (int)blobFile.Length));
-        if (read != length)
-        {
-            throw new BadFileException("File length is not equal to read bytes");
-        }
+        var bytes = await GetBytesFromIFormFile(blobFile);
 
         var basePath = $"{OfferCatalog}/{offerId}";
+        return await _blobRepository.UploadBlobFile(bytes, blobFile.FileName, basePath);
+    }
+
+    public async Task<string> UploadProductImage(Guid productId, IFormFile blobFile)
+    {
+        var bytes = await GetBytesFromIFormFile(blobFile);
+
+        var basePath = $"{ProductCatalog}/{productId}";
         return await _blobRepository.UploadBlobFile(bytes, blobFile.FileName, basePath);
     }
 
@@ -106,5 +113,24 @@ internal class AssetsService : IAssetsService
             FileStream = stream,
             ContentType = contentType
         };
+    }
+
+    private static async Task<byte[]> GetBytesFromIFormFile(IFormFile formFile)
+    {
+        var length = formFile.Length;
+        if (length < 0)
+        {
+            throw new BadFileException("File length is less than 0");
+        }
+
+        await using var fileStream = formFile.OpenReadStream();
+        var bytes = new byte[length];
+        var read = await fileStream.ReadAsync(bytes.AsMemory(0, (int)formFile.Length));
+        if (read != length)
+        {
+            throw new BadFileException("File length is not equal to read bytes");
+        }
+
+        return bytes;
     }
 }

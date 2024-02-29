@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Data;
+using System.Text;
 using CupsellCloneAPI.Database.Entities.Product;
 using CupsellCloneAPI.Database.Factory;
 using CupsellCloneAPI.Database.Models;
@@ -19,13 +20,12 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product?> GetById(Guid productId)
     {
-        const string sql = $@"
+        const string query = $@"
 SELECT TOP 1
     P.Id as {nameof(Product.Id)},
     P.Name as {nameof(Product.Name)},
     P.Description as {nameof(Product.Description)},
     P.ProductTypeId as {nameof(Product.ProductTypeId)},
-    P.SellerId as {nameof(Product.SellerId)},
     T.Id as {nameof(ProductType.Id)},
     T.Name as {nameof(ProductType.Name)}
 FROM [products].[Products] P
@@ -33,14 +33,16 @@ FROM [products].[Products] P
     ON P.ProductTypeId = T.Id
 WHERE P.Id = @Id";
 
-        var result = await QueryProductsAsync(sql, new { Id = productId });
+        using var conn = _connectionFactory.GetSqlDbConnection();
+        var result = await QueryProductsAsync(conn, query, new { Id = productId });
         return result.FirstOrDefault();
     }
 
-    public async Task<IEnumerable<Product>> GetFiltered(string? searchPhrase, int pageNumber, int pageSize,
-        FilterOptionEnum sortBy, SortDirectionEnum sortDirection, Guid sellerId)
+    public async Task<(IEnumerable<Product> Products, int Count)> GetFiltered(string? searchPhrase, int pageNumber,
+        int pageSize,
+        FilterOptionEnum sortBy, SortDirectionEnum sortDirection)
     {
-        var sb = new StringBuilder($@"
+        var querySb = new StringBuilder($@"
 SELECT
     P.Id as {nameof(Product.Id)},
     P.Name as {nameof(Product.Name)},
@@ -52,13 +54,24 @@ FROM [products].[Products] P
     INNER JOIN [products].[ProductTypes] T
     ON P.ProductTypeId = T.Id
 ");
+        var countQuerySb = new StringBuilder($@"
+SELECT
+    COUNT(*)
+FROM [products].[Products] P
+    INNER JOIN [products].[ProductTypes] T
+    ON P.ProductTypeId = T.Id
+");
+
         if (!searchPhrase.IsNullOrEmpty())
         {
-            sb.Append($@"
+            var searchQuery = $@"
 WHERE LOWER(P.Name) LIKE '%{searchPhrase?.ToLower()}%'
     OR LOWER(P.Description) LIKE '%{searchPhrase?.ToLower()}%'
     OR LOWER(T.Name) LIKE '%{searchPhrase?.ToLower()}%'
-");
+";
+
+            querySb.Append(searchQuery);
+            countQuerySb.Append(searchQuery);
         }
 
         var columnsSelectors = new Dictionary<FilterOptionEnum, string>
@@ -68,41 +81,38 @@ WHERE LOWER(P.Name) LIKE '%{searchPhrase?.ToLower()}%'
             { FilterOptionEnum.ProductType, "ORDER BY T.Name" },
         };
 
-        sb.Append(sortBy != FilterOptionEnum.None
+        querySb.Append(sortBy != FilterOptionEnum.None
             ? columnsSelectors[sortBy]
             : columnsSelectors[FilterOptionEnum.ProductName]);
 
         if (sortDirection == SortDirectionEnum.DESC)
         {
-            sb.AppendJoin(" ", "DESC");
+            querySb.AppendJoin(" ", "DESC");
         }
 
-        sb.Append(@"
+        querySb.Append(@"
 OFFSET @OffsetRows ROWS
 FETCH NEXT @FetchRows ROWS ONLY");
 
-        return await QueryProductsAsync(
-            sb.ToString(),
-            new { OffsetRows = pageSize * (pageNumber - 1), FetchRows = pageSize }
+        using var conn = _connectionFactory.GetSqlDbConnection();
+        return await QueryProductsWithCountAsync(conn, querySb.ToString(),
+            new { OffsetRows = pageSize * (pageNumber - 1), FetchRows = pageSize }, countQuerySb.ToString()
         );
     }
 
-    public async Task<Guid> Create(string name, string? description, int typeId, Guid sellerId)
+    public async Task<Guid> Create(string name, string? description, int typeId)
     {
         using var conn = _connectionFactory.GetSqlDbConnection();
         var newGuid = Guid.NewGuid();
         const string sql = @"
 INSERT INTO [products].[Products]
-(Id, Name, Description, ProductTypeId, SellerId)
+(Id, Name, Description, ProductTypeId)
 VALUES
-(@Id, @Name, @Description, @ProductTypeId, @SellerId)";
+(@Id, @Name, @Description, @ProductTypeId)";
 
         await conn.ExecuteAsync(
             sql: sql,
-            param: new
-            {
-                Id = newGuid, Name = name, Description = description, ProductTypeId = typeId, SellerId = sellerId
-            }
+            param: new { Id = newGuid, Name = name, Description = description, ProductTypeId = typeId }
         );
 
         return newGuid;
@@ -137,11 +147,10 @@ WHERE Id = @Id";
         );
     }
 
-    private async Task<IEnumerable<Product>> QueryProductsAsync(string sql, object param)
+    private Task<IEnumerable<Product>> QueryProductsAsync(IDbConnection dbConnection, string query, object param)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
-        return await conn.QueryAsync<Product, ProductType, Product>(
-            sql: sql,
+        return dbConnection.QueryAsync<Product, ProductType, Product>(
+            sql: query,
             map: (prod, type) =>
             {
                 prod.ProductType = type;
@@ -150,6 +159,16 @@ WHERE Id = @Id";
             param: param,
             splitOn: nameof(ProductType.Id)
         );
+    }
+
+    private async Task<(IEnumerable<Product> Products, int Count)> QueryProductsWithCountAsync(
+        IDbConnection dbConnection, string query, object param, string countQuery)
+    {
+        var resultsTask = QueryProductsAsync(dbConnection, query, param);
+        var countTask = dbConnection.ExecuteScalarAsync<int>(countQuery);
+
+        await Task.WhenAll(resultsTask, countTask);
+        return (resultsTask.Result, countTask.Result);
     }
 
     public async Task<IEnumerable<ProductType>> GetProductTypes()

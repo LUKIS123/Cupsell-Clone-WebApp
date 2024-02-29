@@ -6,7 +6,7 @@ namespace CupsellCloneAPI.Core.Services
 {
     internal class GraphicService : IGraphicService
     {
-        public Task<PageResult<GraphicDto>> GetAll()
+        public Task<PageResult<GraphicDto>> GetAll(SearchQuery searchQuery)
         {
             throw new NotImplementedException();
         }

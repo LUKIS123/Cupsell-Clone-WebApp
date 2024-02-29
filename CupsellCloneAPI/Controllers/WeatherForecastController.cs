@@ -28,8 +28,8 @@ public class WeatherForecastController : ControllerBase
     [HttpGet("TEST")]
     public async Task<IEnumerable<Product>> GetProducts()
     {
-        return await _productRepository.GetFiltered("t-Shirt", 1, 2, FilterOptionEnum.None, SortDirectionEnum.ASC,
-            Guid.Empty);
+        var p = await _productRepository.GetFiltered("t-Shirt", 1, 2, FilterOptionEnum.None, SortDirectionEnum.ASC);
+        return p.Products;
     }
 
     [HttpGet("TEST2")]

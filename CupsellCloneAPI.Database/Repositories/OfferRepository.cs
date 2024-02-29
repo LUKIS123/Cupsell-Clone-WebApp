@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Data;
+using System.Text;
 using CupsellCloneAPI.Database.Entities.Product;
 using CupsellCloneAPI.Database.Entities.User;
 using CupsellCloneAPI.Database.Factory;
@@ -20,8 +21,7 @@ public class OfferRepository : IOfferRepository
 
     public async Task<Offer?> GetById(Guid id)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
-        const string sql = $@"
+        const string query = $@"
 SELECT TOP 1
     O.Id as {nameof(Offer.Id)},
     O.ProductId as {nameof(Offer.ProductId)},
@@ -29,6 +29,7 @@ SELECT TOP 1
     O.SellerId as {nameof(Offer.SellerId)},
     O.Price as {nameof(Offer.Price)},
     O.IsAvailable as {nameof(Offer.IsAvailable)},
+    O.Description as {nameof(Offer.Description)},
     P.Id as {nameof(Product.Id)},
     P.Name as {nameof(Product.Name)},
     P.Description as {nameof(Product.Description)},
@@ -63,19 +64,15 @@ FROM [products].[Offers] O
     ON U.RoleId = R.Id
 WHERE O.Id = @Id";
 
-        var result = await QueryOffersAsync(sql, new { Id = id });
+        using var conn = _connectionFactory.GetSqlDbConnection();
+        var result = await QueryOffersAsync(conn, query, new { Id = id });
         return result.FirstOrDefault();
     }
 
-    public async Task<IEnumerable<Offer>> GetFiltered(
-        string? searchPhrase,
-        int pageNumber,
-        int pageSize,
-        FilterOptionEnum sortBy,
-        SortDirectionEnum sortDirection)
+    public async Task<(IEnumerable<Offer>, int)> GetFiltered(string? searchPhrase, int pageNumber, int pageSize,
+        FilterOptionEnum sortBy, SortDirectionEnum sortDirection)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
-        var sb = new StringBuilder($@"
+        var querySb = new StringBuilder($@"
 SELECT
     O.Id as {nameof(Offer.Id)},
     O.ProductId as {nameof(Offer.ProductId)},
@@ -83,6 +80,7 @@ SELECT
     O.SellerId as {nameof(Offer.SellerId)},
     O.Price as {nameof(Offer.Price)},
     O.IsAvailable as {nameof(Offer.IsAvailable)},
+    O.Description as {nameof(Offer.Description)},
     P.Id as {nameof(Product.Id)},
     P.Name as {nameof(Product.Name)},
     P.Description as {nameof(Product.Description)},
@@ -114,17 +112,33 @@ FROM [products].[Offers] O
     INNER JOIN [users].[Users] U
     ON O.SellerId = U.Id
     INNER JOIN [users].[Roles] R
-    ON U.RoleId = R.Id
-");
+    ON U.RoleId = R.Id");
+        var countQuerySb = new StringBuilder($@"
+SELECT
+    COUNT(*) 
+FROM [products].[Offers] O
+    INNER JOIN [products].[Products] P
+    ON O.ProductId = P.Id
+    INNER JOIN [products].[ProductTypes] T
+    ON P.ProductTypeId = T.Id
+    INNER JOIN [products].[Graphics] G
+    ON O.GraphicsId = G.Id
+    INNER JOIN [users].[Users] U
+    ON O.SellerId = U.Id
+    INNER JOIN [users].[Roles] R
+    ON U.RoleId = R.Id");
+
         if (!searchPhrase.IsNullOrEmpty())
         {
-            sb.Append($@"
+            var searchQuery = $@"
 WHERE LOWER(P.Name) LIKE '%{searchPhrase?.ToLower()}%'
     OR LOWER(P.Description) LIKE '%{searchPhrase?.ToLower()}%'
     OR LOWER(T.Name) LIKE '%{searchPhrase?.ToLower()}%'
     OR LOWER(G.Name) LIKE '%{searchPhrase?.ToLower()}%'
-    OR LOWER(U.Username) LIKE '%{searchPhrase?.ToLower()}%'
-");
+    OR LOWER(U.Username) LIKE '%{searchPhrase?.ToLower()}%'";
+
+            querySb.Append(searchQuery);
+            countQuerySb.Append(searchQuery);
         }
 
         var columnsSelectors = new Dictionary<FilterOptionEnum, string>
@@ -136,41 +150,42 @@ WHERE LOWER(P.Name) LIKE '%{searchPhrase?.ToLower()}%'
             { FilterOptionEnum.SellerUsername, "ORDER BY U.Username" },
         };
 
-        sb.Append(sortBy != FilterOptionEnum.None
+        querySb.Append(sortBy != FilterOptionEnum.None
             ? columnsSelectors[sortBy]
             : columnsSelectors[FilterOptionEnum.ProductName]);
 
         if (sortDirection == SortDirectionEnum.DESC)
         {
-            sb.AppendJoin(" ", "DESC");
+            querySb.AppendJoin(" ", "DESC");
         }
 
-        sb.Append(@"
+        querySb.Append(@"
 OFFSET @OffsetRows ROWS
 FETCH NEXT @FetchRows ROWS ONLY");
 
-        return await QueryOffersAsync(
-            sb.ToString(),
-            new { OffsetRows = pageSize * (pageNumber - 1), FetchRows = pageSize }
+        using var conn = _connectionFactory.GetSqlDbConnection();
+        return await QueryOffersWithCountAsync(conn, querySb.ToString(),
+            new { OffsetRows = pageSize * (pageNumber - 1), FetchRows = pageSize }, countQuerySb.ToString()
         );
     }
 
-    public async Task<Guid> Create(Guid productId, Guid graphicId, Guid sellerId, decimal price, bool isAvailable)
+    public async Task<Guid> Create(Guid productId, Guid graphicId, Guid sellerId, decimal price, bool isAvailable,
+        string? description)
     {
         using var conn = _connectionFactory.GetSqlDbConnection();
         var newGuid = Guid.NewGuid();
         const string sql = @"
 INSERT INTO [products].[Offers]
-(Id, ProductId, GraphicsId, SellerId, Price, IsAvailable)
+(Id, ProductId, GraphicsId, SellerId, Price, IsAvailable, Description)
 VALUES
-(@Id, @ProductId, @GraphicsId, @SellerId, @Price, @IsAvailable)";
+(@Id, @ProductId, @GraphicsId, @SellerId, @Price, @IsAvailable, @Description)";
 
         await conn.ExecuteAsync(
             sql: sql,
             param: new
             {
                 Id = newGuid, ProductId = productId, GraphicId = graphicId, SellerId = sellerId, Price = price,
-                IsAvailable = isAvailable
+                IsAvailable = isAvailable, Description = description
             }
         );
         return newGuid;
@@ -188,7 +203,8 @@ WHERE Id = @Id";
             param: new { Id = id });
     }
 
-    public async Task Update(Guid id, Guid productId, Guid graphicId, Guid sellerId, decimal price, bool isAvailable)
+    public async Task Update(Guid id, Guid productId, Guid graphicId, Guid sellerId, decimal price, bool isAvailable,
+        string? description)
     {
         using var conn = _connectionFactory.GetSqlDbConnection();
         const string sql = @"
@@ -211,11 +227,10 @@ WHERE Id = @Id";
         );
     }
 
-    private async Task<IEnumerable<Offer>> QueryOffersAsync(string sql, object param)
+    private Task<IEnumerable<Offer>> QueryOffersAsync(IDbConnection dbConnection, string query, object param)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
-        return await conn.QueryAsync<Offer, Product, ProductType, Graphic, User, Role, Offer>(
-            sql: sql,
+        return dbConnection.QueryAsync<Offer, Product, ProductType, Graphic, User, Role, Offer>(
+            sql: query,
             map: (offer, product, type, graphic, user, role) =>
             {
                 product.ProductType = type;
@@ -229,5 +244,15 @@ WHERE Id = @Id";
             param: param,
             splitOn: nameof(Product.Id)
         );
+    }
+
+    private async Task<(IEnumerable<Offer> Offers, int Count)> QueryOffersWithCountAsync(IDbConnection dbConnection,
+        string query, object param, string countQuery)
+    {
+        var resultsTask = QueryOffersAsync(dbConnection, query, param);
+        var countTask = dbConnection.ExecuteScalarAsync<int>(countQuery);
+
+        await Task.WhenAll(resultsTask, countTask);
+        return (resultsTask.Result, countTask.Result);
     }
 }

@@ -8,7 +8,7 @@ namespace CupsellCloneAPI.Core.Services.Interfaces
         Task<PageResult<ProductDto>> GetProducts(SearchQuery searchQuery);
         Task<ProductDto> GetProductById(Guid id);
         Task<Guid> CreateProduct(CreateProductDto newProduct);
-        Task UpdateProduct(Guid id, CreateProductDto updatedProduct);
+        Task UpdateProduct(Guid id, UpdateProductDto updatedProduct);
         Task DeleteProduct(Guid id);
     }
 }

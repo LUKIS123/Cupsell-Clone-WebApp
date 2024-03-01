@@ -4,21 +4,27 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
 
-	<!-- <ItemGroup> -->
-	<!-- 	<Content Remove="nlog.config" /> -->
-	<!-- </ItemGroup> -->
-	<!-- -->
-	<!-- <ItemGroup> -->
-	<!-- 	<None Include="nlog.config" /> -->
-	<!-- </ItemGroup> -->
+		<!-- SPA config -->
+		<SpaRoot>CupsellCloneClient\</SpaRoot>
+		<SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
+		<SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="8.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.2" />
 		<PackageReference Include="NLog.Web.AspNetCore" Version="5.3.8" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Don't publish the SPA source files, but do show them in the project files list -->
+		<Content Remove="$(SpaRoot)**" />
+		<None Remove="$(SpaRoot)**" />
+		<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
 	</ItemGroup>
 
 	<ItemGroup>

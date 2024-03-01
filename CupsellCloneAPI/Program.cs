@@ -82,6 +82,8 @@ builder.Services.AddCors(opt =>
 var app = builder.Build();
 
 app.UseResponseCaching();
+
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
@@ -102,5 +104,16 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapFallbackToFile("/index.html");
+app.UseSpa(config =>
+{
+    config.Options.SourcePath = "CupsellCloneClient";
+    if (app.Environment.IsDevelopment())
+    {
+        config.UseProxyToSpaDevelopmentServer("https://localhost:5173");
+    }
+});
+
 
 app.Run();

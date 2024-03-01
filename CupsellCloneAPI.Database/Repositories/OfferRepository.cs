@@ -113,6 +113,7 @@ FROM [products].[Offers] O
     ON O.SellerId = U.Id
     INNER JOIN [users].[Roles] R
     ON U.RoleId = R.Id");
+
         var countQuerySb = new StringBuilder($@"
 SELECT
     COUNT(*) 

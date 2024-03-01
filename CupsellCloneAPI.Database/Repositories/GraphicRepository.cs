@@ -1,4 +1,5 @@
-﻿using CupsellCloneAPI.Database.Entities.Product;
+﻿using System.Data;
+using CupsellCloneAPI.Database.Entities.Product;
 using CupsellCloneAPI.Database.Entities.User;
 using CupsellCloneAPI.Database.Factory;
 using CupsellCloneAPI.Database.Repositories.Interfaces;
@@ -42,11 +43,12 @@ FROM [products].[Graphics] G
     ON U.RoleId = R.Id
 WHERE G.Id = @Id";
 
-        var result = await QueryGraphicsAsync(sql, new { Id = id });
+        using var conn = _connectionFactory.GetSqlDbConnection();
+        var result = await QueryGraphicsAsync(conn, sql, new { Id = id });
         return result.FirstOrDefault();
     }
 
-    public async Task<IEnumerable<Graphic>> GetByUserId(Guid sellerId)
+    public async Task<(IEnumerable<Graphic> Offers, int Count)> GetByUserId(Guid sellerId)
     {
         const string sql = $@"
 SELECT
@@ -73,7 +75,14 @@ FROM [products].[Graphics] G
     ON U.RoleId = R.Id
 WHERE G.SellerId = @SellerId";
 
-        return await QueryGraphicsAsync(sql, new { SellerId = sellerId });
+        var countQuery = $@"
+SELECT
+    COUNT(*)
+FROM [products].[Graphics] 
+WHERE SellerId = @SellerId";
+
+        using var conn = _connectionFactory.GetSqlDbConnection();
+        return await QueryGraphicsWithCountAsync(conn, sql, new { SellerId = sellerId }, countQuery);
     }
 
     public async Task<Guid> Create(string name, Guid sellerId, string? description)
@@ -122,11 +131,10 @@ WHERE Id = @Id";
         );
     }
 
-    private async Task<IEnumerable<Graphic>> QueryGraphicsAsync(string sql, object param)
+    private Task<IEnumerable<Graphic>> QueryGraphicsAsync(IDbConnection dbConnection, string query, object param)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
-        return await conn.QueryAsync<Graphic, User, Role, Graphic>(
-            sql: sql,
+        return dbConnection.QueryAsync<Graphic, User, Role, Graphic>(
+            sql: query,
             map: (graphic, user, userRole) =>
             {
                 user.Role = userRole;
@@ -136,5 +144,15 @@ WHERE Id = @Id";
             param: param,
             splitOn: nameof(User.Id)
         );
+    }
+
+    public async Task<(IEnumerable<Graphic> Offers, int Count)> QueryGraphicsWithCountAsync(IDbConnection dbConnection,
+        string query, object param, string countQuery)
+    {
+        var resultsTask = QueryGraphicsAsync(dbConnection, query, param);
+        var countTask = dbConnection.ExecuteScalarAsync<int>(countQuery);
+
+        await Task.WhenAll(resultsTask, countTask);
+        return (resultsTask.Result, countTask.Result);
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CupsellCloneAPI.Controllers;
 
 [ApiController]
-[Authorize]
+[Authorize(Roles = "Seller,Administrator")]
 [Route("cupsellclone/graphics")]
 public class GraphicController : ControllerBase
 {
@@ -20,7 +20,6 @@ public class GraphicController : ControllerBase
         _imageService = imageService;
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<GraphicDto>>> Get([FromQuery] SearchQuery searchQuery)
     {
@@ -28,7 +27,6 @@ public class GraphicController : ControllerBase
         return Ok(graphicDtos);
     }
 
-    [AllowAnonymous]
     [HttpGet("{graphicId:guid}")]
     public async Task<ActionResult<GraphicDto>> GetById([FromRoute] Guid graphicId)
     {
@@ -37,7 +35,6 @@ public class GraphicController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Seller,Administrator")]
     public async Task<ActionResult> Create([FromBody] CreateGraphicDto dto)
     {
         var createdGraphicId = await _graphicService.Create(dto);
@@ -46,7 +43,6 @@ public class GraphicController : ControllerBase
     }
 
     [HttpPost("upload/{offerId:guid}")]
-    [Authorize(Roles = "Seller,Administrator")]
     public async Task<ActionResult> UploadGraphicImage([FromRoute] Guid offerId, [FromForm] IFormFile blobFile)
     {
         await _imageService.UploadOfferImage(offerId, blobFile);
@@ -54,7 +50,6 @@ public class GraphicController : ControllerBase
     }
 
     [HttpPut("update/{graphicId:guid}")]
-    [Authorize(Roles = "Seller,Administrator")]
     public async Task<ActionResult> Update([FromRoute] Guid graphicId, [FromQuery] string newName)
     {
         await _graphicService.Update(graphicId, newName);
@@ -62,7 +57,6 @@ public class GraphicController : ControllerBase
     }
 
     [HttpDelete("delete/{graphicId:guid}")]
-    [Authorize(Roles = "Seller,Administrator")]
     public async Task<ActionResult> Delete([FromRoute] Guid graphicId)
     {
         await _graphicService.Delete(graphicId);

@@ -13,9 +13,9 @@ public class VerificationTokenRepository : IVerificationTokenRepository
         _connectionFactory = connectionFactory;
     }
 
-    public async Task<VerificationTokenDto> GetByToken(string verificationToken)
+    public async Task<VerificationTokenDto?> GetByToken(string verificationToken)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = $@"
 SELECT
     UserId as {nameof(VerificationTokenDto.UserId)},
@@ -29,9 +29,9 @@ WHERE VerificationToken = @VerificationToken";
         );
     }
 
-    public async Task<VerificationTokenDto> GetByUserId(Guid userId)
+    public async Task<VerificationTokenDto?> GetByUserId(Guid userId)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = $@"
 SELECT
     UserId as {nameof(VerificationTokenDto.UserId)},
@@ -47,7 +47,7 @@ WHERE UserId = @UserId";
 
     public async Task Create(Guid userId, string verificationToken)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 INSERT INTO [users].[UserVerificationTokens]
 (UserId, VerificationToken)
@@ -66,7 +66,7 @@ VALUES
 
     public async Task DeleteByUserId(Guid userId)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 DELETE FROM [users].[UserVerificationTokens]
 WHERE UserId = @UserId";

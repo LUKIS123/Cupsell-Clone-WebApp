@@ -16,7 +16,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetById(Guid id)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = $@"
 SELECT TOP 1
     U.Id as {nameof(User.Id)},
@@ -53,7 +53,7 @@ WHERE U.Id = @Id";
 
     public async Task<User?> GetByEmail(string email)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = $@"
 SELECT TOP 1
     U.Id as {nameof(User.Id)},
@@ -92,7 +92,7 @@ WHERE U.Email = @Email";
         string email, string username, string password, string phoneNumber, string? name,
         string? lastName, DateTime? dateOfBirth, string? address, int roleId)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         var newGuid = Guid.NewGuid();
         const string sql = @"
 INSERT INTO [users].[Users]
@@ -114,7 +114,7 @@ VALUES
 
     public async Task AddNewUser(User user)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 INSERT INTO [users].[Users]
 (Id, Email, Username, PasswordHash, PhoneNumber, Name, LastName, DateOfBirth, Address, RoleId)
@@ -135,7 +135,7 @@ VALUES
         string? name,
         string? lastName, DateTime? dateOfBirth, string? address, int roleId)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 UPDATE [users].[Users]
 SET
@@ -162,7 +162,7 @@ WHERE Id = @Id";
 
     public async Task UpdateUserVerificationStatusTrue(Guid id)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 UPDATE [users].[Users]
 SET
@@ -180,7 +180,7 @@ WHERE Id = @Id";
 
     public async Task<IEnumerable<Role>> GetUserRoles()
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = $@"
 SELECT TOP 1000
     Id as {nameof(Role.Id)},

@@ -26,10 +26,10 @@ namespace CupsellCloneAPI.Core.Services
 
         public async Task<PageResult<ProductDto>> GetProducts(SearchQuery searchQuery)
         {
-            var productsCountTuple = await _productRepository.GetFiltered(
+            var (enumerable, count) = await _productRepository.GetFiltered(
                 searchQuery.SearchPhrase, searchQuery.PageNumber, searchQuery.PageSize, searchQuery.SortBy,
                 searchQuery.SortDirection);
-            var products = productsCountTuple.Products
+            var products = enumerable
                 .ToList();
             var productImagesUris = await _assetsService.GetProductsImagesUris(
                 products.Select(x => x.Id));
@@ -49,7 +49,7 @@ namespace CupsellCloneAPI.Core.Services
             return new PageResult<ProductDto>
             {
                 Items = productDtoList,
-                TotalItemsCount = productsCountTuple.Count,
+                TotalItemsCount = count,
                 PageNumber = searchQuery.PageNumber,
                 PageSize = searchQuery.PageSize
             };

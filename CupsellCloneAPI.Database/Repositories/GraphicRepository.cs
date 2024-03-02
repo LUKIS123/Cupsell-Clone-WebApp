@@ -43,7 +43,7 @@ FROM [products].[Graphics] G
     ON U.RoleId = R.Id
 WHERE G.Id = @Id";
 
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         var result = await QueryGraphicsAsync(conn, sql, new { Id = id });
         return result.FirstOrDefault();
     }
@@ -81,13 +81,13 @@ SELECT
 FROM [products].[Graphics] 
 WHERE SellerId = @SellerId";
 
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         return await QueryGraphicsWithCountAsync(conn, sql, new { SellerId = sellerId }, countQuery);
     }
 
     public async Task<Guid> Create(string name, Guid sellerId, string? description)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         var newGuid = Guid.NewGuid();
         const string sql = @"
 INSERT INTO [products].[Graphics]
@@ -105,7 +105,7 @@ VALUES
 
     public async Task Delete(Guid id)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 DELETE FROM [products].[Graphics]
 WHERE Id = @Id";
@@ -117,7 +117,7 @@ WHERE Id = @Id";
 
     public async Task Update(Guid id, string newName, string? description)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 UPDATE [products].[Graphics]
 SET

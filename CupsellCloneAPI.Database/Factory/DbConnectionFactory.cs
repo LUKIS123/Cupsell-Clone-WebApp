@@ -12,9 +12,11 @@ namespace CupsellCloneAPI.Database.Factory
             _connectionString = connectionString;
         }
 
-        public IDbConnection GetSqlDbConnection()
+        public async Task<IDbConnection> GetSqlDbConnection()
         {
-            return new SqlConnection(_connectionString);
+            var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+            return connection;
         }
     }
 }

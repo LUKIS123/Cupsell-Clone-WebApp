@@ -64,7 +64,7 @@ FROM [products].[Offers] O
     ON U.RoleId = R.Id
 WHERE O.Id = @Id";
 
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         var result = await QueryOffersAsync(conn, query, new { Id = id });
         return result.FirstOrDefault();
     }
@@ -164,7 +164,7 @@ WHERE LOWER(P.Name) LIKE '%{searchPhrase?.ToLower()}%'
 OFFSET @OffsetRows ROWS
 FETCH NEXT @FetchRows ROWS ONLY");
 
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         return await QueryOffersWithCountAsync(conn, querySb.ToString(),
             new { OffsetRows = pageSize * (pageNumber - 1), FetchRows = pageSize }, countQuerySb.ToString()
         );
@@ -173,7 +173,7 @@ FETCH NEXT @FetchRows ROWS ONLY");
     public async Task<Guid> Create(Guid productId, Guid graphicId, Guid sellerId, decimal price, bool isAvailable,
         string? description)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         var newGuid = Guid.NewGuid();
         const string sql = @"
 INSERT INTO [products].[Offers]
@@ -194,7 +194,7 @@ VALUES
 
     public async Task Delete(Guid id)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 DELETE FROM [products].[Offers]
 WHERE Id = @Id";
@@ -207,7 +207,7 @@ WHERE Id = @Id";
     public async Task Update(Guid id, Guid productId, Guid graphicId, Guid sellerId, decimal price, bool isAvailable,
         string? description)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 UPDATE [products].[Offers]
 SET

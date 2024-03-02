@@ -16,7 +16,7 @@ public class AvailableItemsRepository : IAvailableItemsRepository
 
     public async Task<AvailableItem?> GetById(Guid id)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = $@"
 SELECT TOP 1
     A.Id as {nameof(AvailableItem.Id)},
@@ -46,7 +46,7 @@ WHERE A.Id = @Id";
     public async Task<Dictionary<Guid, IEnumerable<AvailableItem>>> GetAvailableItemsByOffersIds(
         IEnumerable<Guid> offerIds)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = $@"
 SELECT
     A.Id as {nameof(AvailableItem.Id)},
@@ -81,7 +81,7 @@ WHERE A.OfferId IN @OfferIds";
 
     public async Task<IEnumerable<AvailableItem>> GetAvailableItemsByOfferId(Guid offerId)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = $@"
 SELECT
     A.Id as {nameof(AvailableItem.Id)},
@@ -109,7 +109,7 @@ WHERE A.OfferId = @OfferId";
 
     public async Task<Dictionary<Size, Guid>> CreateItems(Dictionary<Size, int> sizeQuantityDictionary, Guid offerId)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         var sizeGuidDictionary = new Dictionary<Size, Guid>();
         const string sql = @"
 INSERT INTO [products].[AvailableItems]
@@ -135,7 +135,7 @@ VALUES
 
     public async Task Delete(Guid id)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 DELETE FROM [products].[AvailableItems]
 WHERE Id = @Id";
@@ -147,7 +147,7 @@ WHERE Id = @Id";
 
     public async Task Update(Guid id, int sizeId, int quantity)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 UPDATE [products].[AvailableItems]
 SET
@@ -168,7 +168,7 @@ WHERE Id = @Id";
 
     public async Task<IEnumerable<Size>> GetSizes()
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = $@"
 SELECT TOP 1000
     Id as {nameof(Size.Id)},
@@ -182,7 +182,7 @@ FROM [products].[Sizes]";
 
     public async Task<Size?> GetSizeById(int sizeId)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = $@"
 SELECT TOP 1
     Id as {nameof(Size.Id)},

@@ -41,11 +41,11 @@ internal class OfferService : IOfferService
 
     public async Task<PageResult<OfferDto>> GetOffers(SearchQuery searchQuery)
     {
-        var offersCountTuple = await _offerRepository.GetFiltered(
+        var (enumerable, count) = await _offerRepository.GetFiltered(
             searchQuery.SearchPhrase, searchQuery.PageNumber, searchQuery.PageSize, searchQuery.SortBy,
             searchQuery.SortDirection
         );
-        var offers = offersCountTuple.Offers
+        var offers = enumerable
             .ToList();
 
         var availableOffersItemsTask = _availableItemsRepository.GetAvailableItemsByOffersIds(offers
@@ -88,7 +88,7 @@ internal class OfferService : IOfferService
         var results = new PageResult<OfferDto>
         {
             Items = offerDtoList,
-            TotalItemsCount = offersCountTuple.Count,
+            TotalItemsCount = count,
             PageSize = searchQuery.PageSize,
             PageNumber = searchQuery.PageNumber
         };

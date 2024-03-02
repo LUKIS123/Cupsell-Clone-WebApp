@@ -33,7 +33,7 @@ FROM [products].[Products] P
     ON P.ProductTypeId = T.Id
 WHERE P.Id = @Id";
 
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         var result = await QueryProductsAsync(conn, query, new { Id = productId });
         return result.FirstOrDefault();
     }
@@ -94,7 +94,7 @@ WHERE LOWER(P.Name) LIKE '%{searchPhrase?.ToLower()}%'
 OFFSET @OffsetRows ROWS
 FETCH NEXT @FetchRows ROWS ONLY");
 
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         return await QueryProductsWithCountAsync(conn, querySb.ToString(),
             new { OffsetRows = pageSize * (pageNumber - 1), FetchRows = pageSize }, countQuerySb.ToString()
         );
@@ -102,7 +102,7 @@ FETCH NEXT @FetchRows ROWS ONLY");
 
     public async Task<Guid> Create(string name, string? description, int typeId)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         var newGuid = Guid.NewGuid();
         const string sql = @"
 INSERT INTO [products].[Products]
@@ -120,7 +120,7 @@ VALUES
 
     public async Task Delete(Guid id)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 DELETE FROM [products].[Products]
 WHERE Id = @Id";
@@ -132,7 +132,7 @@ WHERE Id = @Id";
 
     public async Task Update(Guid id, string name, string? description, int typeId)
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = @"
 UPDATE [products].[Products]
 SET
@@ -173,7 +173,7 @@ WHERE Id = @Id";
 
     public async Task<IEnumerable<ProductType>> GetProductTypes()
     {
-        using var conn = _connectionFactory.GetSqlDbConnection();
+        using var conn = await _connectionFactory.GetSqlDbConnection();
         const string sql = $@"
 SELECT TOP 1000
     Id as {nameof(ProductType.Id)},

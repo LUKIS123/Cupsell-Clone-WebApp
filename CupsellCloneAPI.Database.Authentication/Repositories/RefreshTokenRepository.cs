@@ -13,9 +13,9 @@ namespace CupsellCloneAPI.Database.Authentication.Repositories
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<RefreshTokenDto> GetByToken(string token)
+        public async Task<RefreshTokenDto?> GetByToken(string token)
         {
-            using var conn = _connectionFactory.GetSqlDbConnection();
+            using var conn = await _connectionFactory.GetSqlDbConnection();
             const string sql = $@"
 SELECT
     Id as {nameof(RefreshTokenDto.Id)},
@@ -32,7 +32,7 @@ WHERE RefreshToken = @RefreshToken";
 
         public async Task<Guid> Create(Guid userId, string refreshToken)
         {
-            using var conn = _connectionFactory.GetSqlDbConnection();
+            using var conn = await _connectionFactory.GetSqlDbConnection();
             var newGuid = Guid.NewGuid();
             const string sql = @"
 INSERT INTO [users].[UserRefreshTokens]
@@ -54,7 +54,7 @@ VALUES
 
         public async Task Delete(Guid id)
         {
-            using var conn = _connectionFactory.GetSqlDbConnection();
+            using var conn = await _connectionFactory.GetSqlDbConnection();
             const string sql = @"
 DELETE FROM [users].[UserRefreshTokens]
 WHERE Id = @Id";
@@ -66,7 +66,7 @@ WHERE Id = @Id";
 
         public async Task DeleteByUserId(Guid userId)
         {
-            using var conn = _connectionFactory.GetSqlDbConnection();
+            using var conn = await _connectionFactory.GetSqlDbConnection();
             const string sql = @"
 DELETE FROM [users].[UserRefreshTokens]
 WHERE UserId = @UserId";

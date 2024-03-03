@@ -6,7 +6,6 @@ using CupsellCloneAPI.Database.Factory;
 using CupsellCloneAPI.Database.Models;
 using CupsellCloneAPI.Database.Repositories.Interfaces;
 using Dapper;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CupsellCloneAPI.Database.Repositories;
 
@@ -129,14 +128,14 @@ FROM [products].[Offers] O
     INNER JOIN [users].[Roles] R
     ON U.RoleId = R.Id");
 
-        if (!searchPhrase.IsNullOrEmpty())
+        if (!string.IsNullOrWhiteSpace(searchPhrase))
         {
             var searchQuery = $@"
-WHERE LOWER(P.Name) LIKE '%{searchPhrase?.ToLower()}%'
-    OR LOWER(P.Description) LIKE '%{searchPhrase?.ToLower()}%'
-    OR LOWER(T.Name) LIKE '%{searchPhrase?.ToLower()}%'
-    OR LOWER(G.Name) LIKE '%{searchPhrase?.ToLower()}%'
-    OR LOWER(U.Username) LIKE '%{searchPhrase?.ToLower()}%'";
+WHERE LOWER(P.Name) LIKE '%{searchPhrase.ToLower()}%'
+    OR LOWER(P.Description) LIKE '%{searchPhrase.ToLower()}%'
+    OR LOWER(T.Name) LIKE '%{searchPhrase.ToLower()}%'
+    OR LOWER(G.Name) LIKE '%{searchPhrase.ToLower()}%'
+    OR LOWER(U.Username) LIKE '%{searchPhrase.ToLower()}%'";
 
             querySb.Append(searchQuery);
             countQuerySb.Append(searchQuery);

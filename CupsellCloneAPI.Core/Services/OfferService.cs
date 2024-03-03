@@ -152,16 +152,16 @@ internal class OfferService : IOfferService
 
     public async Task Update(Guid id, UpdateOfferDto dto)
     {
-        var offer = await _offerRepository.GetById(id);
-        if (offer is null)
-        {
-            throw new NotFoundException($"Offer with id:{id} not found");
-        }
-
         var userClaims = _userAccessor.UserClaimsPrincipal;
         if (userClaims is null)
         {
             throw new ForbidException("Could not verify user claims");
+        }
+
+        var offer = await _offerRepository.GetById(id);
+        if (offer is null)
+        {
+            throw new NotFoundException($"Offer with id:{id} not found");
         }
 
         var authorizationResult = await _authorizationService.AuthorizeAsync(
@@ -183,16 +183,16 @@ internal class OfferService : IOfferService
 
     public async Task Delete(Guid id)
     {
-        var offer = _offerRepository.GetById(id);
-        if (offer is null)
-        {
-            throw new NotFoundException($"Offer with id:{id} not found");
-        }
-
         var userClaims = _userAccessor.UserClaimsPrincipal;
         if (userClaims is null)
         {
             throw new ForbidException("Could not verify user claims");
+        }
+
+        var offer = _offerRepository.GetById(id);
+        if (offer is null)
+        {
+            throw new NotFoundException($"Offer with id:{id} not found");
         }
 
         var authorizationResult = await _authorizationService.AuthorizeAsync(
@@ -202,11 +202,10 @@ internal class OfferService : IOfferService
 
         if (!authorizationResult.Succeeded)
         {
-            throw new ForbidException("You cannot modify this resource");
+            throw new ForbidException("User is not authorized to delete this resource");
         }
 
         _logger.LogInformation("Offer with id:{OfferId} DELETE action invoked...", id);
-
         await _offerRepository.Delete(id);
     }
 }

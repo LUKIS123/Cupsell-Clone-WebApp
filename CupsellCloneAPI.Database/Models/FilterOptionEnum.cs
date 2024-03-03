@@ -8,5 +8,6 @@
         ProductType = 4,
         GraphicName = 5,
         SellerUsername = 6,
+        GraphicDescription = 7,
     }
 }

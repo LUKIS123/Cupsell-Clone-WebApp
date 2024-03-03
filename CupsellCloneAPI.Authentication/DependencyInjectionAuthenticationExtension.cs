@@ -65,7 +65,8 @@ namespace CupsellCloneAPI.Authentication
 
         public static IServiceCollection AddAuthorizationHandlers(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
+            serviceCollection.AddScoped<IAuthorizationHandler, OfferResourceOperationRequirementHandler>();
+            serviceCollection.AddScoped<IAuthorizationHandler, GraphicResourceOperationRequirementHandler>();
             return serviceCollection;
         }
     }

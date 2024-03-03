@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CupsellCloneAPI.Authentication.Authorization;
 using CupsellCloneAPI.Core.Exceptions;
 using CupsellCloneAPI.Core.Models;
 using CupsellCloneAPI.Core.Models.Dtos.Graphic;
@@ -65,24 +66,84 @@ namespace CupsellCloneAPI.Core.Services
             };
         }
 
-        public Task<GraphicDto> GetById(Guid id)
+        public async Task<GraphicDto> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            var graphicTask = _graphicRepository.GetById(id);
+            var graphicImageTask = _assetsService.GetGraphicImageUri(id);
+            await Task.WhenAll(graphicTask, graphicImageTask);
+
+            var graphicDto = _mapper.Map<GraphicDto>(graphicTask.Result);
+            graphicDto.ImageUri = graphicImageTask.Result;
+            return graphicDto;
         }
 
-        public Task<Guid> Create(CreateGraphicDto newGraphic)
+        public async Task<Guid> Create(CreateGraphicDto newGraphic)
         {
-            throw new NotImplementedException();
+            var userId = _userAccessor.UserId;
+            if (userId is null)
+            {
+                throw new ForbidException("Could not access user Name Identifier");
+            }
+
+            return await _graphicRepository.Create(newGraphic.Name, userId.Value, newGraphic.Description);
         }
 
-        public Task Update(Guid id, string graphicName)
+        public async Task Update(Guid id, UpdateGraphicDto updatedGraphic)
         {
-            throw new NotImplementedException();
+            var userClaims = _userAccessor.UserClaimsPrincipal;
+            if (userClaims is null)
+            {
+                throw new ForbidException("Could not verify user claims");
+            }
+
+            var graphic = await _graphicRepository.GetById(id);
+            if (graphic is null)
+            {
+                throw new NotFoundException($"Graphic with id: {id} not found");
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(
+                userClaims,
+                graphic,
+                new ResourceOperationRequirement(ResourceOperation.UPDATE));
+
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException("User is not authorized to update this resource");
+            }
+
+            _logger.LogInformation("Graphic with id:{GraphicId} UPDATE action invoked...", id);
+
+            await _graphicRepository.Update(id, updatedGraphic.Name ?? graphic.Name,
+                graphic.Description ?? graphic.Description);
         }
 
-        public Task Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            throw new NotImplementedException();
+            var userClaims = _userAccessor.UserClaimsPrincipal;
+            if (userClaims is null)
+            {
+                throw new ForbidException("Could not verify user claims");
+            }
+
+            var graphic = await _graphicRepository.GetById(id);
+            if (graphic is null)
+            {
+                throw new NotFoundException($"Graphic with id: {id} not found");
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(
+                userClaims,
+                graphic,
+                new ResourceOperationRequirement(ResourceOperation.DELETE));
+
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException("User is not authorized to delete this resource");
+            }
+
+            _logger.LogInformation("Graphic with id:{GraphicId} DELETE action invoked...", id);
+            await _graphicRepository.Delete(id);
         }
     }
 }

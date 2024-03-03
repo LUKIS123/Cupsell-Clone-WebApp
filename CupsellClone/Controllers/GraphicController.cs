@@ -51,9 +51,9 @@ public class GraphicController : ControllerBase
     }
 
     [HttpPut("update/{graphicId:guid}")]
-    public async Task<ActionResult> Update([FromRoute] Guid graphicId, [FromQuery] string newName)
+    public async Task<ActionResult> Update([FromRoute] Guid graphicId, [FromBody] UpdateGraphicDto dto)
     {
-        await _graphicService.Update(graphicId, newName);
+        await _graphicService.Update(graphicId, dto);
         return Ok();
     }
 

@@ -5,7 +5,6 @@ using CupsellCloneAPI.Database.Factory;
 using CupsellCloneAPI.Database.Models;
 using CupsellCloneAPI.Database.Repositories.Interfaces;
 using Dapper;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CupsellCloneAPI.Database.Repositories;
 
@@ -39,8 +38,7 @@ WHERE P.Id = @Id";
     }
 
     public async Task<(IEnumerable<Product> Products, int Count)> GetFiltered(string? searchPhrase, int pageNumber,
-        int pageSize,
-        FilterOptionEnum sortBy, SortDirectionEnum sortDirection)
+        int pageSize, FilterOptionEnum sortBy, SortDirectionEnum sortDirection)
     {
         var querySb = new StringBuilder($@"
 SELECT
@@ -62,12 +60,12 @@ FROM [products].[Products] P
     ON P.ProductTypeId = T.Id
 ");
 
-        if (!searchPhrase.IsNullOrEmpty())
+        if (!string.IsNullOrWhiteSpace(searchPhrase))
         {
             var searchQuery = $@"
-WHERE LOWER(P.Name) LIKE '%{searchPhrase?.ToLower()}%'
-    OR LOWER(P.Description) LIKE '%{searchPhrase?.ToLower()}%'
-    OR LOWER(T.Name) LIKE '%{searchPhrase?.ToLower()}%'
+WHERE LOWER(P.Name) LIKE '%{searchPhrase.ToLower()}%'
+    OR LOWER(P.Description) LIKE '%{searchPhrase.ToLower()}%'
+    OR LOWER(T.Name) LIKE '%{searchPhrase.ToLower()}%'
 ";
 
             querySb.Append(searchQuery);

@@ -8,7 +8,7 @@ namespace CupsellCloneAPI.Core.Services.Interfaces
         Task<PageResult<GraphicDto>> GetByUser(SearchQuery searchQuery);
         Task<GraphicDto> GetById(Guid id);
         Task<Guid> Create(CreateGraphicDto newGraphic);
-        Task Update(Guid id, string graphicName);
+        Task Update(Guid id, UpdateGraphicDto updatedGraphic);
         Task Delete(Guid id);
     }
 }

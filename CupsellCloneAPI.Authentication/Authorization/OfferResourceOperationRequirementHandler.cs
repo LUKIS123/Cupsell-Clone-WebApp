@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CupsellCloneAPI.Authentication.Authorization
 {
-    public class ResourceOperationRequirementHandler : AuthorizationHandler<ResourceOperationRequirement, Offer>
+    public class OfferResourceOperationRequirementHandler : AuthorizationHandler<ResourceOperationRequirement, Offer>
     {
         protected override Task HandleRequirementAsync(
             AuthorizationHandlerContext context,

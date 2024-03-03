@@ -8,7 +8,7 @@ namespace CupsellCloneAPI.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("cupsellclone/offers")]
+[Route("api/cupsellclone/offers")]
 public class OfferController : ControllerBase
 {
     private readonly IOfferService _offerService;

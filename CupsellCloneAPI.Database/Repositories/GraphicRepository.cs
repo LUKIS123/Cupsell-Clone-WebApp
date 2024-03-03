@@ -2,6 +2,7 @@
 using CupsellCloneAPI.Database.Entities.Product;
 using CupsellCloneAPI.Database.Entities.User;
 using CupsellCloneAPI.Database.Factory;
+using CupsellCloneAPI.Database.Models;
 using CupsellCloneAPI.Database.Repositories.Interfaces;
 using Dapper;
 
@@ -48,7 +49,7 @@ WHERE G.Id = @Id";
         return result.FirstOrDefault();
     }
 
-    public async Task<(IEnumerable<Graphic> Offers, int Count)> GetByUserId(Guid sellerId)
+    public async Task<(IEnumerable<Graphic> Graphics, int Count)> GetFiltered(Guid sellerId)
     {
         const string sql = $@"
 SELECT
@@ -131,6 +132,13 @@ WHERE Id = @Id";
         );
     }
 
+    public Task<(IEnumerable<Graphic> Graphics, int Count)> GetFilteredByUser(Guid sellerId,
+        string? searchQuerySearchPhrase, int searchQueryPageNumber,
+        int searchQueryPageSize, FilterOptionEnum searchQuerySortBy, SortDirectionEnum searchQuerySortDirection)
+    {
+        throw new NotImplementedException();
+    }
+
     private Task<IEnumerable<Graphic>> QueryGraphicsAsync(IDbConnection dbConnection, string query, object param)
     {
         return dbConnection.QueryAsync<Graphic, User, Role, Graphic>(
@@ -146,7 +154,8 @@ WHERE Id = @Id";
         );
     }
 
-    public async Task<(IEnumerable<Graphic> Offers, int Count)> QueryGraphicsWithCountAsync(IDbConnection dbConnection,
+    public async Task<(IEnumerable<Graphic> Graphics, int Count)> QueryGraphicsWithCountAsync(
+        IDbConnection dbConnection,
         string query, object param, string countQuery)
     {
         var resultsTask = QueryGraphicsAsync(dbConnection, query, param);

@@ -8,7 +8,7 @@ namespace CupsellCloneAPI.Controllers;
 
 [ApiController]
 [Authorize(Roles = "Seller,Administrator")]
-[Route("cupsellclone/graphics")]
+[Route("api/cupsellclone/graphics")]
 public class GraphicController : ControllerBase
 {
     private readonly IGraphicService _graphicService;
@@ -23,11 +23,12 @@ public class GraphicController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<GraphicDto>>> Get([FromQuery] SearchQuery searchQuery)
     {
-        var graphicDtos = await _graphicService.GetAll(searchQuery);
+        var graphicDtos = await _graphicService.GetByUser(searchQuery);
         return Ok(graphicDtos);
     }
 
     [HttpGet("{graphicId:guid}")]
+    [AllowAnonymous]
     public async Task<ActionResult<GraphicDto>> GetById([FromRoute] Guid graphicId)
     {
         var graphicDto = await _graphicService.GetById(graphicId);

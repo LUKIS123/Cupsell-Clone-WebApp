@@ -4,7 +4,7 @@ using CupsellCloneAPI.Core.Services.Interfaces;
 namespace CupsellCloneAPI.Controllers;
 
 [ApiController]
-[Route("cupsellclone/assets")]
+[Route("api/cupsellclone/assets")]
 public class AssetsController : ControllerBase
 {
     private readonly IAssetsService _imageService;

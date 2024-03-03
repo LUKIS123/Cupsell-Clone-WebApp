@@ -79,7 +79,7 @@ internal class OfferService : IOfferService
                 if (offerDto.Graphic is not null &&
                     graphicImagesUrisTask.Result.TryGetValue(offerDto.Graphic.Id, out var graphicImageUris))
                 {
-                    offerDto.Graphic.BlobUrl = graphicImageUris;
+                    offerDto.Graphic.ImageUri = graphicImageUris;
                 }
 
                 return offerDto;
@@ -117,7 +117,7 @@ internal class OfferService : IOfferService
         if (offerDto.Graphic is not null)
         {
             var graphicImagesUris = await _assetsService.GetGraphicImageUri(offerDto.Graphic.Id);
-            offerDto.Graphic.BlobUrl = graphicImagesUris;
+            offerDto.Graphic.ImageUri = graphicImagesUris;
         }
 
         return offerDto;

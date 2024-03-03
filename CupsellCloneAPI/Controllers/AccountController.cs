@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CupsellCloneAPI.Controllers
 {
     [ApiController]
-    [Route("cupsellclone/account")]
+    [Route("api/cupsellclone/account")]
     public class AccountController : ControllerBase
     {
         // TODO: zrobic akcje dla modyfikacji danych konta oraz odzyskiwanie hasła

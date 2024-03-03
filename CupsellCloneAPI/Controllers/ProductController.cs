@@ -8,7 +8,7 @@ namespace CupsellCloneAPI.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("cupsellclone/products")]
+[Route("api/cupsellclone/products")]
 public class ProductController : ControllerBase
 {
     private readonly IProductService _productService;

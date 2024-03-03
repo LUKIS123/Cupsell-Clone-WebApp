@@ -9,7 +9,6 @@ namespace CupsellCloneAPI.Core.Utils
 {
     public static class DependencyInjectionUtilitiesExtension
     {
-        private const string EmailSectionName = "EmailCommunicationSettings";
         private const string EncryptionSectionName = "EncryptionParams";
 
         public static IServiceCollection AddUtilities(

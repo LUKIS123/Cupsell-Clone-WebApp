@@ -2,10 +2,10 @@
 {
     public class ApiEmailSettings
     {
-        public string BaseUrl { get; set; }
-        public string Username { get; set; }
-        public string ApiKey { get; set; }
-        public string DomainName { get; set; }
-        public string SenderName { get; set; }
+        public string BaseUrl { get; set; } = default!;
+        public string Username { get; set; } = default!;
+        public string ApiKey { get; set; } = default!;
+        public string DomainName { get; set; } = default!;
+        public string SenderName { get; set; } = default!;
     }
 }

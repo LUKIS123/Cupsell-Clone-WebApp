@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI", "CupsellCloneAPI\CupsellCloneAPI.csproj", "{FFE8D28A-9F31-4366-A11C-B135A9110DBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellClone", "CupsellClone\CupsellClone.csproj", "{FFE8D28A-9F31-4366-A11C-B135A9110DBB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Database", "CupsellCloneAPI.Database\CupsellCloneAPI.Database.csproj", "{7290D94F-A032-41AF-BC3E-F236321C45B4}"
 EndProject
@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Database.Au
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.Core.Utils", "CupsellCloneAPI.Core.Utils\CupsellCloneAPI.Core.Utils.csproj", "{81210601-E524-4221-8DDF-0A3380C74C5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CupsellCloneAPI.EmailCommunication", "CupsellCloneAPI.EmailCommunication\CupsellCloneAPI.EmailCommunication.csproj", "{43C4FEA2-AE95-4507-BE94-C89C71439A9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CupsellCloneAPI.EmailCommunication", "CupsellCloneAPI.EmailCommunication\CupsellCloneAPI.EmailCommunication.csproj", "{43C4FEA2-AE95-4507-BE94-C89C71439A9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,7 +2,7 @@
 {
     public class EncryptionSettings
     {
-        public string EncryptionKey { get; set; }
-        public byte[] Salt { get; set; }
+        public required string EncryptionKey { get; set; }
+        public required byte[] Salt { get; set; }
     }
 }

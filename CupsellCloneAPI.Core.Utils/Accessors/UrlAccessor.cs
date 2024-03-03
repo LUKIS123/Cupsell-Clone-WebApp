@@ -11,14 +11,14 @@ namespace CupsellCloneAPI.Core.Utils.Accessors
             _httpContextAccessor = httpContextAccessor;
         }
 
-        private HttpRequest Request => _httpContextAccessor.HttpContext.Request;
+        private HttpRequest? Request => _httpContextAccessor.HttpContext?.Request;
 
-        public string BaseUrl => Request.Scheme + "://" + Request.Host;
+        public string BaseUrl => Request?.Scheme + "://" + Request?.Host;
 
         public string GetControllerPath(string controllerName)
         {
-            var path = Request.Path.Value;
-            return path[..(path.IndexOf(controllerName, StringComparison.Ordinal) + controllerName.Length)] + "/";
+            var path = Request?.Path.Value;
+            return path?[..(path.IndexOf(controllerName, StringComparison.Ordinal) + controllerName.Length)] + "/";
         }
     }
 }
